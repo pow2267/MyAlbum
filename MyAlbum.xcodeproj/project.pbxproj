@@ -13,6 +13,7 @@
 		76220AC826CA898B00A71B24 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76220AC626CA898B00A71B24 /* Main.storyboard */; };
 		76220ACA26CA898F00A71B24 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76220AC926CA898F00A71B24 /* Assets.xcassets */; };
 		76220ACD26CA898F00A71B24 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 76220ACB26CA898F00A71B24 /* LaunchScreen.storyboard */; };
+		76220AE026CBE61200A71B24 /* PhotoListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76220ADF26CBE61100A71B24 /* PhotoListCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		76220AC926CA898F00A71B24 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		76220ACC26CA898F00A71B24 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		76220ACE26CA898F00A71B24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		76220ADF26CBE61100A71B24 /* PhotoListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				76220AC926CA898F00A71B24 /* Assets.xcassets */,
 				76220ACB26CA898F00A71B24 /* LaunchScreen.storyboard */,
 				76220ACE26CA898F00A71B24 /* Info.plist */,
+				76220ADF26CBE61100A71B24 /* PhotoListCollectionViewCell.swift */,
 			);
 			path = MyAlbum;
 			sourceTree = "<group>";
@@ -140,6 +143,7 @@
 				76220AC526CA898B00A71B24 /* ViewController.swift in Sources */,
 				76220AC126CA898B00A71B24 /* AppDelegate.swift in Sources */,
 				76220AC326CA898B00A71B24 /* SceneDelegate.swift in Sources */,
+				76220AE026CBE61200A71B24 /* PhotoListCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

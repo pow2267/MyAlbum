@@ -11,21 +11,29 @@ import Photos
 class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibraryChangeObserver {
     
     @IBOutlet weak var collectionView: UICollectionView!
-    var fetchResult: PHFetchResult<PHAssetCollection>?
+    var recents: PHFetchResult<PHAssetCollection>?
+    var favorites: PHFetchResult<PHAssetCollection>?
+    var albums: PHFetchResult<PHAssetCollection>?
     let imageManager: PHCachingImageManager = PHCachingImageManager()
     
     func requestCollection() {
-        let cameraRoll: PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
+        let recents: PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
         
-        self.fetchResult = cameraRoll
+        let favorites: PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
+        
+        let albums: PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
+        
+        self.recents = recents
+        self.favorites = favorites
+        self.albums = albums
     }
     
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        guard let changes = changeInstance.changeDetails(for: self.fetchResult!) else {
+        guard let changes = changeInstance.changeDetails(for: self.albums!) else {
             return
         }
         
-        fetchResult = changes.fetchResultAfterChanges
+        albums = changes.fetchResultAfterChanges
         
         OperationQueue.main.addOperation {
             //
@@ -38,14 +46,30 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
             preconditionFailure("콜렉션 뷰 셀 생성 오류")
         }
         
-        guard let collections: PHAssetCollection = self.fetchResult?[indexPath.row] else {
-            preconditionFailure("카메라 롤 불러오기 오류")
-        }
-        
         let imageOption: PHImageRequestOptions = PHImageRequestOptions()
         imageOption.resizeMode = .exact
         
-        if let asset = PHAsset.fetchAssets(in: collections, options: nil).firstObject {
+        let collections: PHAssetCollection
+        
+        switch indexPath.row {
+        case 0:
+            guard let recents = self.recents?.firstObject else {
+                preconditionFailure("최근 항목 불러오기 오류")
+            }
+            collections = recents
+        case 1:
+            guard let favorites = self.favorites?.firstObject else {
+                preconditionFailure("즐겨찾는 항목 불러오기 오류")
+            }
+            collections = favorites
+        default:
+            guard let albums = self.albums?.object(at: indexPath.row - 2) else {
+                preconditionFailure("\(indexPath.row - 2)번째 앨범 불러오기 오류")
+            }
+            collections = albums
+        }
+        
+        if let asset = PHAsset.fetchAssets(in: collections, options: nil).lastObject {
             let half: CGFloat = (UIScreen.main.bounds.width - 50) / 2.0
 
             imageManager.requestImage(for: asset,
@@ -60,7 +84,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
         }
         
         cell.titleLabel.text = collections.localizedTitle
-        cell.countLabel.text = String(collections.estimatedAssetCount)
+        cell.countLabel.text = String(collections.photosCount)
         // 이미지 뷰의 가장자리 둥글게
         cell.imageView.layer.cornerRadius = cell.imageView.frame.width / 40
         
@@ -68,7 +92,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.fetchResult?.count ?? 0
+        return (self.albums?.count ?? 0) + 2
     }
 
     override func viewDidLoad() {
@@ -83,14 +107,17 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
             OperationQueue.main.addOperation {
                 self.collectionView.reloadData()
             }
+            
         case .limited:
             print("제한 접근 허가")
             self.requestCollection()
             OperationQueue.main.addOperation {
                 self.collectionView.reloadData()
             }
+            
         case .denied:
             print("접근 불허")
+            
         case .notDetermined:
             print("아직 응답하지 않음")
             PHPhotoLibrary.requestAuthorization({ (state) in
@@ -101,20 +128,25 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
                     OperationQueue.main.addOperation {
                         self.collectionView.reloadData()
                     }
+                    
                 case .limited:
                     print("제한 접근 허가")
                     self.requestCollection()
                     OperationQueue.main.addOperation {
                         self.collectionView.reloadData()
                     }
+                    
                 case .denied:
                     print("사용자가 불허 함")
+                    
                 default:
                     break
                 }
             })
+            
         case .restricted:
             print("접근 제한")
+            
         default:
             break
         }
@@ -135,3 +167,14 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
     }
 }
 
+// 어느 파일에 있어야 하나?
+extension PHAssetCollection {
+    var photosCount: Int {
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
+        
+        let result = PHAsset.fetchAssets(in: self, options: fetchOptions)
+        
+        return result.count
+    }
+}

@@ -11,7 +11,7 @@ import Photos
 class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibraryChangeObserver {
     
     @IBOutlet weak var collectionView: UICollectionView!
-    var fetchResult: PHFetchResult<PHAssetCollection>!
+    var fetchResult: PHFetchResult<PHAssetCollection>?
     let imageManager: PHCachingImageManager = PHCachingImageManager()
     
     func requestCollection() {
@@ -21,7 +21,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
     }
     
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        guard let changes = changeInstance.changeDetails(for: fetchResult) else {
+        guard let changes = changeInstance.changeDetails(for: self.fetchResult!) else {
             return
         }
         
@@ -35,36 +35,40 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell: PhotoListCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? PhotoListCollectionViewCell else {
-            preconditionFailure("오류가 발생했습니다.")
+            preconditionFailure("콜렉션 뷰 셀 생성 오류")
         }
         
-        let collections: PHAssetCollection = self.fetchResult[indexPath.row]
-        
-        guard let asset: PHAsset = PHAsset.fetchAssets(in: collections, options: nil).firstObject else {
-            //
-            preconditionFailure()
+        guard let collections: PHAssetCollection = self.fetchResult?[indexPath.row] else {
+            preconditionFailure("카메라 롤 불러오기 오류")
         }
         
         let imageOption: PHImageRequestOptions = PHImageRequestOptions()
-        
         imageOption.resizeMode = .exact
         
-        imageManager.requestImage(for: asset,
-                                  targetSize: CGSize(width: 240, height: 240),
-                                  contentMode: .aspectFill,
-                                  options: imageOption,
-                                  resultHandler: { image, _ in
-                                        cell.imageView.image = image
-        })
+        if let asset = PHAsset.fetchAssets(in: collections, options: nil).firstObject {
+            let half: CGFloat = (UIScreen.main.bounds.width - 50) / 2.0
+
+            imageManager.requestImage(for: asset,
+                                      targetSize: CGSize(width: half, height: half),
+                                      contentMode: .aspectFill,
+                                      options: imageOption,
+                                      resultHandler: { image, _ in
+                                            cell.imageView.image = image
+            })
+        } else {
+            cell.imageView.image = nil
+        }
         
         cell.titleLabel.text = collections.localizedTitle
         cell.countLabel.text = String(collections.estimatedAssetCount)
+        // 이미지 뷰의 가장자리 둥글게
+        cell.imageView.layer.cornerRadius = cell.imageView.frame.width / 40
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.fetchResult.count
+        return self.fetchResult?.count ?? 0
     }
 
     override func viewDidLoad() {
@@ -114,6 +118,17 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
         default:
             break
         }
+        
+        let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        flowLayout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        flowLayout.minimumInteritemSpacing = 10
+        flowLayout.minimumLineSpacing = 10
+        
+        let half: CGFloat = (UIScreen.main.bounds.width - 50) / 2.0
+        
+        flowLayout.itemSize = CGSize(width: half, height: half + 40)
+        
+        self.collectionView.collectionViewLayout = flowLayout
         
         // 유저의 모든 Photo Assets을 불러오기 위해
         PHPhotoLibrary.shared().register(self)

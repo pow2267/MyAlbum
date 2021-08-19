@@ -165,6 +165,20 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
         // 유저의 모든 Photo Assets을 불러오기 위해
         PHPhotoLibrary.shared().register(self)
     }
+    
+    // MARK: - Navigation
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let albumViewController: AlbumViewController = segue.destination as? AlbumViewController else {
+            return
+        }
+        
+        guard let cell: PhotoListCollectionViewCell = sender as? PhotoListCollectionViewCell else {
+            return
+        }
+        
+        albumViewController.albumTitle = cell.titleLabel.text
+    }
 }
 
 // 어느 파일에 있어야 하나?

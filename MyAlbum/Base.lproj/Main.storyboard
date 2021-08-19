@@ -66,6 +66,7 @@
                                             <outlet property="countLabel" destination="hQj-HW-NcE" id="rsW-0k-Z3s"/>
                                             <outlet property="imageView" destination="AcE-F8-2vk" id="PC2-7Q-mr6"/>
                                             <outlet property="titleLabel" destination="tu5-6e-KFh" id="1yo-is-32C"/>
+                                            <segue destination="gk9-th-Hxe" kind="show" id="flp-fI-Fai"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -91,6 +92,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="944.92753623188412" y="88.392857142857139"/>
+        </scene>
+        <!--Album View Controller-->
+        <scene sceneID="XdW-9C-xEI">
+            <objects>
+                <viewController id="gk9-th-Hxe" customClass="AlbumViewController" customModule="MyAlbum" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="aF4-Vd-yw3">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="5jA-bZ-YHg"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="bbl-qR-T6p">
+                        <barButtonItem key="rightBarButtonItem" title="선택" id="KKn-d2-AIq"/>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Hw0-SQ-ANh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1648" y="88"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="0nm-c0-dKb">

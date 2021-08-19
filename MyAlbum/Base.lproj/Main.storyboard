@@ -100,12 +100,76 @@
                     <view key="view" contentMode="scaleToFill" id="aF4-Vd-yw3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="g9g-X3-93h">
+                                <rect key="frame" x="0.0" y="852" width="414" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="AbB-PF-vqX"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem enabled="NO" systemItem="action" id="Ixw-wC-Xfz"/>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="QcQ-Ba-sKy"/>
+                                    <barButtonItem title="최신순" id="yfR-kB-H1e"/>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Y7k-pF-l5W"/>
+                                    <barButtonItem enabled="NO" systemItem="trash" id="AJi-mb-KsX"/>
+                                </items>
+                            </toolbar>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="eHJ-IH-nml">
+                                <rect key="frame" x="0.0" y="88" width="414" height="764"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="wy0-d2-LMD">
+                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="383-MC-pUl" customClass="ImageCollectionViewCell" customModule="MyAlbum" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="0Wv-vn-Qfr">
+                                            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6ZM-Mo-lfU">
+                                                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                                </imageView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="6ZM-Mo-lfU" secondAttribute="trailing" id="2bo-MA-HPh"/>
+                                                <constraint firstItem="6ZM-Mo-lfU" firstAttribute="top" secondItem="0Wv-vn-Qfr" secondAttribute="top" id="4pa-TB-I5o"/>
+                                                <constraint firstAttribute="bottom" secondItem="6ZM-Mo-lfU" secondAttribute="bottom" id="Ham-kL-zd5"/>
+                                                <constraint firstItem="6ZM-Mo-lfU" firstAttribute="leading" secondItem="0Wv-vn-Qfr" secondAttribute="leading" id="IV6-L6-5C5"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <connections>
+                                            <outlet property="imageView" destination="6ZM-Mo-lfU" id="EEG-Lr-1bm"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="gk9-th-Hxe" id="aDT-Yg-dmM"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="5jA-bZ-YHg"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="5jA-bZ-YHg" firstAttribute="trailing" secondItem="eHJ-IH-nml" secondAttribute="trailing" id="BK7-47-S4a"/>
+                            <constraint firstItem="g9g-X3-93h" firstAttribute="top" secondItem="eHJ-IH-nml" secondAttribute="bottom" id="FP2-XS-gcx"/>
+                            <constraint firstItem="eHJ-IH-nml" firstAttribute="top" secondItem="5jA-bZ-YHg" secondAttribute="top" id="Gwq-2e-phx"/>
+                            <constraint firstItem="g9g-X3-93h" firstAttribute="trailing" secondItem="eHJ-IH-nml" secondAttribute="trailing" id="LG9-fs-NCN"/>
+                            <constraint firstItem="g9g-X3-93h" firstAttribute="leading" secondItem="eHJ-IH-nml" secondAttribute="leading" id="Uwg-8A-ac6"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="g9g-X3-93h" secondAttribute="bottom" constant="-34" id="gqe-df-Yfm"/>
+                            <constraint firstItem="eHJ-IH-nml" firstAttribute="leading" secondItem="5jA-bZ-YHg" secondAttribute="leading" id="kGW-vE-INh"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="bbl-qR-T6p">
                         <barButtonItem key="rightBarButtonItem" title="선택" id="KKn-d2-AIq"/>
                     </navigationItem>
+                    <connections>
+                        <outlet property="collectionView" destination="eHJ-IH-nml" id="WS5-4r-mFT"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Hw0-SQ-ANh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

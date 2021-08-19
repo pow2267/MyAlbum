@@ -109,7 +109,11 @@
                                 <items>
                                     <barButtonItem enabled="NO" systemItem="action" id="Ixw-wC-Xfz"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="QcQ-Ba-sKy"/>
-                                    <barButtonItem title="최신순" id="yfR-kB-H1e"/>
+                                    <barButtonItem title="최신순" id="yfR-kB-H1e">
+                                        <connections>
+                                            <action selector="touchUpOrderBarItem:" destination="gk9-th-Hxe" id="5x2-li-u8z"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Y7k-pF-l5W"/>
                                     <barButtonItem enabled="NO" systemItem="trash" id="AJi-mb-KsX"/>
                                 </items>

@@ -153,6 +153,7 @@
                                 </cells>
                                 <connections>
                                     <outlet property="dataSource" destination="gk9-th-Hxe" id="aDT-Yg-dmM"/>
+                                    <outlet property="delegate" destination="gk9-th-Hxe" id="IlD-dr-Y7d"/>
                                 </connections>
                             </collectionView>
                         </subviews>
@@ -169,7 +170,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="bbl-qR-T6p">
-                        <barButtonItem key="rightBarButtonItem" title="선택" id="KKn-d2-AIq"/>
+                        <barButtonItem key="rightBarButtonItem" title="선택" id="KKn-d2-AIq">
+                            <connections>
+                                <action selector="touchUpSelectButton:" destination="gk9-th-Hxe" id="DA0-t6-XSb"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="eHJ-IH-nml" id="WS5-4r-mFT"/>

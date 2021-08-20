@@ -8,17 +8,15 @@
 import UIKit
 import Photos
 
-class AlbumViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibraryChangeObserver {
+class AlbumViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, PHPhotoLibraryChangeObserver {
     
     @IBOutlet weak var collectionView: UICollectionView!
     var albumTitle: String?
     var photos: PHFetchResult<PHAssetCollection>?
     let imageManager: PHCachingImageManager = PHCachingImageManager()
     var isOrderedByCreationDate: Bool = false
-    enum order: String {
-        case latest = "최신순"
-        case oldest = "과거순"
-    }
+    var isSelectMode: Bool = false
+    var selectedCells: [IndexPath] = []
     
     @IBAction func touchUpOrderBarItem(_ sender: UIBarItem) {
         guard let title = sender.title else {
@@ -26,11 +24,11 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, PHPhoto
         }
         
         switch title {
-        case order.latest.rawValue:
-            sender.title = order.oldest.rawValue
+        case "최신순":
+            sender.title = "과거순"
             self.isOrderedByCreationDate = true
         default:
-            sender.title = order.latest.rawValue
+            sender.title = "최신순"
             self.isOrderedByCreationDate = false
         }
         
@@ -39,6 +37,43 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, PHPhoto
                 let indexSet = IndexSet(integer: 0)
                 self.collectionView.reloadSections(indexSet)
             }, completion: nil)
+        }
+    }
+    
+    @IBAction func touchUpSelectButton(_ sender: UINavigationItem) {
+        guard let itemTitle = sender.title else {
+            preconditionFailure("선택 버튼 정보 조회 오류")
+        }
+        
+        switch itemTitle {
+        case "선택":
+            sender.title = "취소"
+            self.navigationItem.title = "항목 선택"
+            self.isSelectMode = true
+        default:
+            sender.title = "선택"
+            self.navigationItem.title = self.albumTitle
+            self.isSelectMode = false
+            self.selectedCells = []
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // 선택 모드일 때
+        if self.isSelectMode {
+            // 이미 선택된 셀일 때
+            let cell = self.collectionView.cellForItem(at: indexPath)
+            
+            if self.selectedCells.contains(indexPath) {
+                self.selectedCells = self.selectedCells.filter { $0 != indexPath }
+                cell?.isSelected = false
+            } else {
+                self.selectedCells.append(indexPath)
+                cell?.isSelected = true
+            }
+        // 선택 모드가 아닐 때, 화면 3으로 이동
+        } else {
+            
         }
     }
 
@@ -75,6 +110,9 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, PHPhoto
                                   resultHandler: { image, _ in
                                     cell.imageView.image = image
         })
+        
+        // 선택할 때 테두리 표시용
+        cell.layer.borderColor = UIColor.red.cgColor
         
         return cell
     }
@@ -118,6 +156,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, PHPhoto
         flowLayout.itemSize = CGSize(width: third, height: third)
         
         self.collectionView.collectionViewLayout = flowLayout
+        self.collectionView.allowsMultipleSelection = true
         
         // 유저의 모든 Photo Assets을 불러오기 위해
         PHPhotoLibrary.shared().register(self)

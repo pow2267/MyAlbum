@@ -46,9 +46,6 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
             preconditionFailure("콜렉션 뷰 셀 생성 오류")
         }
         
-        let imageOption: PHImageRequestOptions = PHImageRequestOptions()
-        imageOption.resizeMode = .exact
-        
         let collections: PHAssetCollection?
         
         switch indexPath.row {
@@ -66,6 +63,10 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
             
             if let asset = PHAsset.fetchAssets(in: collections!, options: nil).lastObject {
                 let half: CGFloat = (UIScreen.main.bounds.width - 50) / 2.0
+                
+                let imageOption: PHImageRequestOptions = PHImageRequestOptions()
+                imageOption.resizeMode = .exact
+                imageOption.isSynchronous = true
 
                 imageManager.requestImage(for: asset,
                                           targetSize: CGSize(width: half, height: half),

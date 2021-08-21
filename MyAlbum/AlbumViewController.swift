@@ -54,12 +54,8 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
             sender.title = "선택"
             self.navigationItem.title = self.albumTitle
             self.isSelectMode = false
-            UIView.performWithoutAnimation({
-                OperationQueue.main.addOperation {
-                    self.collectionView.reloadData()
-                }
-            })
             self.selectedCells = []
+            self.collectionView.reloadData()
             self.orderItem.isEnabled = true
         }
     }
@@ -118,8 +114,10 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: isOrderedByCreationDate)]
         
         let photo = PHAsset.fetchAssets(in: collection, options: fetchOptions).object(at: indexPath.row)
+        
         let imageOption: PHImageRequestOptions = PHImageRequestOptions()
         imageOption.resizeMode = .exact
+        imageOption.isSynchronous = true
         
         let third: CGFloat = floor((UIScreen.main.bounds.width - 10) / 3.0)
         

@@ -16,6 +16,7 @@
 		76220AE026CBE61200A71B24 /* PhotoListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76220ADF26CBE61100A71B24 /* PhotoListCollectionViewCell.swift */; };
 		76220AE226CE5D5C00A71B24 /* AlbumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76220AE126CE5D5B00A71B24 /* AlbumViewController.swift */; };
 		76220AE426CE82EA00A71B24 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76220AE326CE82EA00A71B24 /* ImageCollectionViewCell.swift */; };
+		76220AE626D000D800A71B24 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76220AE526D000D800A71B24 /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		76220ADF26CBE61100A71B24 /* PhotoListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCollectionViewCell.swift; sourceTree = "<group>"; };
 		76220AE126CE5D5B00A71B24 /* AlbumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumViewController.swift; sourceTree = "<group>"; };
 		76220AE326CE82EA00A71B24 /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
+		76220AE526D000D800A71B24 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				76220ADF26CBE61100A71B24 /* PhotoListCollectionViewCell.swift */,
 				76220AE126CE5D5B00A71B24 /* AlbumViewController.swift */,
 				76220AE326CE82EA00A71B24 /* ImageCollectionViewCell.swift */,
+				76220AE526D000D800A71B24 /* DetailViewController.swift */,
 			);
 			path = MyAlbum;
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 				76220AC126CA898B00A71B24 /* AppDelegate.swift in Sources */,
 				76220AC326CA898B00A71B24 /* SceneDelegate.swift in Sources */,
 				76220AE026CBE61200A71B24 /* PhotoListCollectionViewCell.swift in Sources */,
+				76220AE626D000D800A71B24 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

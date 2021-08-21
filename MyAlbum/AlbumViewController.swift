@@ -11,24 +11,23 @@ import Photos
 class AlbumViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, PHPhotoLibraryChangeObserver {
     
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var orderItem: UIBarItem!
     var albumTitle: String?
     var photos: PHFetchResult<PHAssetCollection>?
     let imageManager: PHCachingImageManager = PHCachingImageManager()
     var isOrderedByCreationDate: Bool = false
     var isSelectMode: Bool = false
     var selectedCells: [IndexPath] = []
+    var selectedImage: UIImage?
     
-    @IBAction func touchUpOrderBarItem(_ sender: UIBarItem) {
-        guard let title = sender.title else {
-            preconditionFailure("정렬 버튼 정보 조회 오류")
-        }
+    @IBAction func touchUpOrderBarItem() {
         
-        switch title {
+        switch self.orderItem.title {
         case "최신순":
-            sender.title = "과거순"
+            self.orderItem.title = "과거순"
             self.isOrderedByCreationDate = true
         default:
-            sender.title = "최신순"
+            self.orderItem.title = "최신순"
             self.isOrderedByCreationDate = false
         }
         
@@ -46,34 +45,55 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         }
         
         switch itemTitle {
-        case "선택":
+        case "선택": // 셀 선택하기
             sender.title = "취소"
             self.navigationItem.title = "항목 선택"
             self.isSelectMode = true
-        default:
+            self.orderItem.isEnabled = false
+        default: // 셀 선택 취소
             sender.title = "선택"
             self.navigationItem.title = self.albumTitle
             self.isSelectMode = false
+            UIView.performWithoutAnimation({
+                OperationQueue.main.addOperation {
+                    self.collectionView.reloadData()
+                }
+            })
             self.selectedCells = []
+            self.orderItem.isEnabled = true
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = self.collectionView.cellForItem(at: indexPath) as? ImageCollectionViewCell else {
+            return
+        }
+        
         // 선택 모드일 때
         if self.isSelectMode {
             // 이미 선택된 셀일 때
-            let cell = self.collectionView.cellForItem(at: indexPath)
-            
             if self.selectedCells.contains(indexPath) {
                 self.selectedCells = self.selectedCells.filter { $0 != indexPath }
-                cell?.isSelected = false
+                cell.layer.borderWidth = 0
+                cell.imageView.alpha = 1
             } else {
                 self.selectedCells.append(indexPath)
-                cell?.isSelected = true
+                cell.layer.borderWidth = 2
+                cell.imageView.alpha = 0.75
             }
+            
+            let selectedCellsCount = self.selectedCells.count
+            
+            if selectedCellsCount > 0 {
+                self.navigationItem.title = "\(self.selectedCells.count)장 선택"
+            } else {
+                self.navigationItem.title = "항목 선택"
+            }
+            
         // 선택 모드가 아닐 때, 화면 3으로 이동
         } else {
-            
+            self.selectedCells = []
+            self.navigationController?.pushViewController(DetailViewController(), animated: true)
         }
     }
 
@@ -113,6 +133,13 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         
         // 선택할 때 테두리 표시용
         cell.layer.borderColor = UIColor.red.cgColor
+        if self.isSelectMode && self.selectedCells.contains(indexPath) {
+            cell.layer.borderWidth = 2
+            cell.imageView.alpha = 0.75
+        } else {
+            cell.layer.borderWidth = 0
+            cell.imageView.alpha = 1
+        }
         
         return cell
     }
@@ -156,7 +183,6 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         flowLayout.itemSize = CGSize(width: third, height: third)
         
         self.collectionView.collectionViewLayout = flowLayout
-        self.collectionView.allowsMultipleSelection = true
         
         // 유저의 모든 Photo Assets을 불러오기 위해
         PHPhotoLibrary.shared().register(self)

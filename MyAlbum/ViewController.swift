@@ -49,42 +49,37 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
         let imageOption: PHImageRequestOptions = PHImageRequestOptions()
         imageOption.resizeMode = .exact
         
-        let collections: PHAssetCollection
+        let collections: PHAssetCollection?
         
         switch indexPath.row {
         case 0:
-            guard let recents = self.recents?.firstObject else {
-                preconditionFailure("최근 항목 불러오기 오류")
-            }
-            collections = recents
+            collections = self.recents?.firstObject
         case 1:
-            guard let favorites = self.favorites?.firstObject else {
-                preconditionFailure("즐겨찾는 항목 불러오기 오류")
-            }
-            collections = favorites
+            collections = self.favorites?.firstObject
         default:
-            guard let albums = self.albums?.object(at: indexPath.row - 2) else {
-                preconditionFailure("\(indexPath.row - 2)번째 앨범 불러오기 오류")
-            }
-            collections = albums
+            collections = self.albums?.object(at: indexPath.row - 2)
         }
         
-        if let asset = PHAsset.fetchAssets(in: collections, options: nil).lastObject {
-            let half: CGFloat = (UIScreen.main.bounds.width - 50) / 2.0
+        if collections != nil {
+            cell.titleLabel.text = collections!.localizedTitle
+            cell.countLabel.text = String(collections!.photosCount)
+            
+            if let asset = PHAsset.fetchAssets(in: collections!, options: nil).lastObject {
+                let half: CGFloat = (UIScreen.main.bounds.width - 50) / 2.0
 
-            imageManager.requestImage(for: asset,
-                                      targetSize: CGSize(width: half, height: half),
-                                      contentMode: .aspectFill,
-                                      options: imageOption,
-                                      resultHandler: { image, _ in
-                                            cell.imageView.image = image
-            })
+                imageManager.requestImage(for: asset,
+                                          targetSize: CGSize(width: half, height: half),
+                                          contentMode: .aspectFill,
+                                          options: imageOption,
+                                          resultHandler: { image, _ in
+                                                cell.imageView.image = image
+                })
+            } else {
+                cell.imageView.image = nil
+            }
         } else {
             cell.imageView.image = nil
         }
-        
-        cell.titleLabel.text = collections.localizedTitle
-        cell.countLabel.text = String(collections.photosCount)
         // 이미지 뷰의 가장자리 둥글게
         cell.imageView.layer.cornerRadius = cell.imageView.frame.width / 40
         

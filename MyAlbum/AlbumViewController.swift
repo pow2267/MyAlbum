@@ -12,6 +12,8 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var orderItem: UIBarItem!
+    @IBOutlet weak var toolbar: UIToolbar!
+    
     var albumTitle: String?
     var photos: PHFetchResult<PHAssetCollection>?
     let imageManager: PHCachingImageManager = PHCachingImageManager()
@@ -44,6 +46,9 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
             preconditionFailure("선택 버튼 정보 조회 오류")
         }
         
+        let actionItem = self.toolbar.items?.first
+        let trashItem = self.toolbar.items?.last
+        
         switch itemTitle {
         case "선택": // 셀 선택하기
             sender.title = "취소"
@@ -57,6 +62,8 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
             self.selectedCells = []
             self.collectionView.reloadData()
             self.orderItem.isEnabled = true
+            actionItem?.isEnabled = false
+            trashItem?.isEnabled = false
         }
     }
     
@@ -78,12 +85,19 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                 cell.imageView.alpha = 0.75
             }
             
+            let actionItem = self.toolbar.items?.first
+            let trashItem = self.toolbar.items?.last
+            
             let selectedCellsCount = self.selectedCells.count
             
             if selectedCellsCount > 0 {
                 self.navigationItem.title = "\(self.selectedCells.count)장 선택"
+                actionItem?.isEnabled = true
+                trashItem?.isEnabled = true
             } else {
                 self.navigationItem.title = "항목 선택"
+                actionItem?.isEnabled = false
+                trashItem?.isEnabled = false
             }
             
         // 선택 모드가 아닐 때, 화면 3으로 이동

@@ -179,6 +179,7 @@
                     <connections>
                         <outlet property="collectionView" destination="eHJ-IH-nml" id="WS5-4r-mFT"/>
                         <outlet property="orderItem" destination="yfR-kB-H1e" id="1Kf-UE-a3j"/>
+                        <outlet property="toolbar" destination="g9g-X3-93h" id="mik-Qe-H9z"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Hw0-SQ-ANh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

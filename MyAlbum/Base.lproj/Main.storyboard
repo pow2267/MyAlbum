@@ -107,7 +107,11 @@
                                     <constraint firstAttribute="height" constant="44" id="AbB-PF-vqX"/>
                                 </constraints>
                                 <items>
-                                    <barButtonItem enabled="NO" systemItem="action" id="Ixw-wC-Xfz"/>
+                                    <barButtonItem enabled="NO" systemItem="action" id="Ixw-wC-Xfz">
+                                        <connections>
+                                            <action selector="touchUpShareToolbarItem:" destination="gk9-th-Hxe" id="U7o-xH-OSO"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="QcQ-Ba-sKy"/>
                                     <barButtonItem title="최신순" id="yfR-kB-H1e">
                                         <connections>

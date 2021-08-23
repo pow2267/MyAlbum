@@ -22,6 +22,26 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     var selectedCells: [IndexPath] = []
     var selectedImage: UIImage?
     
+    @IBAction func touchUpShareToolbarItem(_ sender: UIBarButtonItem) {
+        var sharedPhotos: [UIImage] = []
+        
+        for indexPath in selectedCells {
+            guard let cell = self.collectionView.cellForItem(at: indexPath) as? ImageCollectionViewCell else {
+                return
+            }
+            
+            guard let photo = cell.imageView.image else {
+                return
+            }
+            
+            sharedPhotos.append(photo)
+        }
+        
+        let activityViewController = UIActivityViewController(activityItems: sharedPhotos, applicationActivities: nil)
+        
+        self.present(activityViewController, animated: true, completion: nil)
+    }
+    
     @IBAction func touchUpOrderBarItem() {
         
         switch self.orderItem.title {

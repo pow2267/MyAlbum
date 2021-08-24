@@ -197,17 +197,59 @@
         <!--Detail View Controller-->
         <scene sceneID="Keu-3s-KIe">
             <objects>
-                <viewController id="qfG-bJ-pwX" customClass="DetailViewController" customModule="MyAlbum" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="detailViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="qfG-bJ-pwX" customClass="DetailViewController" customModule="MyAlbum" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="OqC-de-zl1">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KfV-Gk-DFu">
+                                <rect key="frame" x="0.0" y="852" width="414" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="XsF-TC-tNu"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem systemItem="action" id="O0X-uU-gGi">
+                                        <connections>
+                                            <action selector="touchUpShareToolbarItem:" destination="gk9-th-Hxe" id="LAb-SX-YbM"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="hgA-U7-5to"/>
+                                    <barButtonItem title="🖤" id="cPc-8I-t8d">
+                                        <connections>
+                                            <action selector="touchUpOrderBarItem" destination="gk9-th-Hxe" id="IvO-Ph-hkO"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="gVx-LI-n7J"/>
+                                    <barButtonItem systemItem="trash" id="asR-r2-aAc">
+                                        <connections>
+                                            <action selector="touchUpTrashToolbarItem:" destination="gk9-th-Hxe" id="Mbd-fi-MJa"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YQU-kg-hB5">
+                                <rect key="frame" x="0.0" y="44" width="414" height="808"/>
+                            </imageView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="fN1-ri-TlU"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="YQU-kg-hB5" firstAttribute="top" secondItem="fN1-ri-TlU" secondAttribute="top" id="Bkb-tr-RSc"/>
+                            <constraint firstItem="KfV-Gk-DFu" firstAttribute="top" secondItem="YQU-kg-hB5" secondAttribute="bottom" id="ElU-uW-wal"/>
+                            <constraint firstItem="KfV-Gk-DFu" firstAttribute="leading" secondItem="fN1-ri-TlU" secondAttribute="leading" id="Jn6-Wy-Cj3"/>
+                            <constraint firstItem="fN1-ri-TlU" firstAttribute="trailing" secondItem="YQU-kg-hB5" secondAttribute="trailing" id="MT2-bM-Ono"/>
+                            <constraint firstAttribute="bottom" secondItem="KfV-Gk-DFu" secondAttribute="bottom" id="VDF-WJ-AT7"/>
+                            <constraint firstItem="KfV-Gk-DFu" firstAttribute="trailing" secondItem="fN1-ri-TlU" secondAttribute="trailing" id="ZX7-fk-Gbi"/>
+                            <constraint firstItem="YQU-kg-hB5" firstAttribute="leading" secondItem="fN1-ri-TlU" secondAttribute="leading" id="fgg-Hp-Th7"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="imageView" destination="YQU-kg-hB5" id="Emb-Ab-rca"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QBI-e8-OU0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2352" y="88"/>
+            <point key="canvasLocation" x="2350.7246376811595" y="87.723214285714278"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="0nm-c0-dKb">

@@ -20,7 +20,6 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     var isOrderedByCreationDate: Bool = false
     var isSelectMode: Bool = false
     var selectedCells: [IndexPath] = []
-    var selectedImage: UIImage?
     
     @IBAction func touchUpTrashToolbarItem(_ sender: UIBarButtonItem) {
         // NSMutableArray?
@@ -140,11 +139,28 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
                 actionItem?.isEnabled = false
                 trashItem?.isEnabled = false
             }
-            
         // 선택 모드가 아닐 때, 화면 3으로 이동
         } else {
-            self.selectedCells = []
-            self.navigationController?.pushViewController(DetailViewController(), animated: true)
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: isOrderedByCreationDate)]
+            
+            guard let collection = self.photos?.firstObject else {
+                return
+            }
+            
+            let asset = PHAsset.fetchAssets(in: collection, options: fetchOptions).object(at: indexPath.row)
+            
+            // init(name: 에서의 name은 info.plist에 있는 'Main storyboard file base name'의 값
+            // view controller의 identifier는 storyboard에서 지정해줬음
+            // 단순히 그냥 let detailViewController = DetailViewController()로 생성하면 outlet들이 연결되지 않음
+            // Interface Builder creates customized instances of your classes and encodes those instances into NIBs and Storyboards for repeated decoding, it doesn't define the classes themselves.
+            guard let detailViewController = UIStoryboard.init(name: "Main", bundle: .main).instantiateViewController(identifier: "detailViewController") as? DetailViewController else {
+                return
+            }
+            
+            detailViewController.asset = asset
+            
+            self.navigationController?.pushViewController(detailViewController, animated: true)
         }
     }
 

@@ -6,13 +6,29 @@
 //
 
 import UIKit
+import Photos
 
 class DetailViewController: UIViewController {
+    
+    @IBOutlet weak var imageView: UIImageView!
+    var asset: PHAsset?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        guard let asset = self.asset else {
+            return
+        }
+        
+        let imageManager: PHCachingImageManager = PHCachingImageManager()
+        
+        imageManager.requestImage(for: asset,
+                                  targetSize: CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height),
+                                  contentMode: .aspectFill,
+                                  options: nil,
+                                  resultHandler: { image, _ in
+                                    self.imageView.image = image
+        })
     }
     
 

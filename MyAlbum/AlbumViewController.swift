@@ -22,6 +22,27 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     var selectedCells: [IndexPath] = []
     var selectedImage: UIImage?
     
+    @IBAction func touchUpTrashToolbarItem(_ sender: UIBarButtonItem) {
+        // NSMutableArray?
+        let assets : NSMutableArray! = NSMutableArray()
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: isOrderedByCreationDate)]
+        
+        guard let collection = self.photos?.firstObject else {
+            return
+        }
+        
+        for indexPath in selectedCells {
+            let asset = PHAsset.fetchAssets(in: collection, options: fetchOptions).object(at: indexPath.row)
+            
+            assets.add(asset)
+        }
+        
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.deleteAssets(assets)
+        }, completionHandler: { isDeleted, _ in if isDeleted { self.selectedCells = [] }})
+    }
+    
     @IBAction func touchUpShareToolbarItem(_ sender: UIBarButtonItem) {
         var sharedPhotos: [UIImage] = []
         
@@ -128,7 +149,13 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     }
 
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        //
+        // 애니메이션 없이 새로 고침
+        OperationQueue.main.addOperation {
+            self.collectionView.performBatchUpdates({
+                let indexSet = IndexSet(integer: 0)
+                self.collectionView.reloadSections(indexSet)
+            }, completion: nil)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

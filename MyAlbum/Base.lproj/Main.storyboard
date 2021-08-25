@@ -208,23 +208,11 @@
                                     <constraint firstAttribute="height" constant="44" id="XsF-TC-tNu"/>
                                 </constraints>
                                 <items>
-                                    <barButtonItem systemItem="action" id="O0X-uU-gGi">
-                                        <connections>
-                                            <action selector="touchUpShareToolbarItem:" destination="gk9-th-Hxe" id="LAb-SX-YbM"/>
-                                        </connections>
-                                    </barButtonItem>
+                                    <barButtonItem systemItem="action" id="O0X-uU-gGi"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="hgA-U7-5to"/>
-                                    <barButtonItem title="🖤" id="cPc-8I-t8d">
-                                        <connections>
-                                            <action selector="touchUpOrderBarItem" destination="gk9-th-Hxe" id="IvO-Ph-hkO"/>
-                                        </connections>
-                                    </barButtonItem>
+                                    <barButtonItem title="🖤" id="cPc-8I-t8d"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="gVx-LI-n7J"/>
-                                    <barButtonItem systemItem="trash" id="asR-r2-aAc">
-                                        <connections>
-                                            <action selector="touchUpTrashToolbarItem:" destination="gk9-th-Hxe" id="Mbd-fi-MJa"/>
-                                        </connections>
-                                    </barButtonItem>
+                                    <barButtonItem systemItem="trash" id="asR-r2-aAc"/>
                                 </items>
                             </toolbar>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YQU-kg-hB5">
@@ -244,6 +232,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="favoriteButton" destination="cPc-8I-t8d" id="SLI-qJ-rXw"/>
                         <outlet property="imageView" destination="YQU-kg-hB5" id="Emb-Ab-rca"/>
                     </connections>
                 </viewController>
@@ -267,7 +256,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AxX-by-93D" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="34.782608695652179" y="88.392857142857139"/>
+            <point key="canvasLocation" x="236" y="88"/>
         </scene>
     </scenes>
     <resources>

@@ -208,7 +208,11 @@
                                     <constraint firstAttribute="height" constant="44" id="XsF-TC-tNu"/>
                                 </constraints>
                                 <items>
-                                    <barButtonItem systemItem="action" id="O0X-uU-gGi"/>
+                                    <barButtonItem systemItem="action" id="O0X-uU-gGi">
+                                        <connections>
+                                            <action selector="touchUpShareToolbarItem:" destination="qfG-bJ-pwX" id="SnM-bl-EWb"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="hgA-U7-5to"/>
                                     <barButtonItem title="🖤" id="cPc-8I-t8d"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="gVx-LI-n7J"/>

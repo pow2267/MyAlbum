@@ -14,6 +14,16 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var favoriteButton: UIBarButtonItem!
     var asset: PHAsset?
 
+    @IBAction func touchUpShareToolbarItem(_ sender: UIBarButtonItem) {
+        guard let photo =  self.imageView.image else {
+            return
+        }
+        
+        let activityViewController = UIActivityViewController(activityItems: [photo], applicationActivities: nil)
+        
+        self.present(activityViewController, animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 

@@ -30,21 +30,15 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
                 let assetChangeRequest = PHAssetChangeRequest.init(for: photo)
                 assetChangeRequest.isFavorite = !(self.asset?.isFavorite ?? false)
             }, completionHandler: { isCompleted, _ in
-                guard let localIdentifier = self.localIdentifier else {
-                    return
-                }
-                
-                guard let result = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil).firstObject else {
-                    return
-                }
-                
-                self.asset = result
-                
-                OperationQueue.main.addOperation {
-                    if result.isFavorite {
-                        self.favoriteButton.title = "❤️"
-                    } else {
-                        self.favoriteButton.title = "🖤"
+                if isCompleted, let localIdentifier = self.localIdentifier, let result = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil).firstObject {
+                    self.asset = result
+                    
+                    OperationQueue.main.addOperation {
+                        if result.isFavorite {
+                            self.favoriteButton.title = "❤️"
+                        } else {
+                            self.favoriteButton.title = "🖤"
+                        }
                     }
                 }
             })

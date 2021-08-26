@@ -214,7 +214,11 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="hgA-U7-5to"/>
-                                    <barButtonItem title="🖤" id="cPc-8I-t8d"/>
+                                    <barButtonItem title="🖤" id="cPc-8I-t8d">
+                                        <connections>
+                                            <action selector="touchUpFavoriteToolbarItem:" destination="qfG-bJ-pwX" id="H42-J6-I2j"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="gVx-LI-n7J"/>
                                     <barButtonItem systemItem="trash" id="asR-r2-aAc"/>
                                 </items>

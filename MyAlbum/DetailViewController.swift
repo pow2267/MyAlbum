@@ -8,12 +8,58 @@
 import UIKit
 import Photos
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var favoriteButton: UIBarButtonItem!
     var asset: PHAsset?
+    var localIdentifier: String?
 
+    @IBAction func touchUpFavoriteToolbarItem(_ sender: UIBarButtonItem) {
+        // Before editing an asset, use its canPerform(_:) method to see if the asset allows editing.
+        guard let isEditable = self.asset?.canPerform(PHAssetEditOperation.properties) else {
+            return
+        }
+        
+        guard let photo = self.asset else {
+            return
+        }
+        
+        if isEditable {
+            PHPhotoLibrary.shared().performChanges({
+                let assetChangeRequest = PHAssetChangeRequest.init(for: photo)
+                assetChangeRequest.isFavorite = !(self.asset?.isFavorite ?? false)
+            }, completionHandler: { isCompleted, _ in
+                guard let localIdentifier = self.localIdentifier else {
+                    return
+                }
+                
+                guard let result = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil).firstObject else {
+                    return
+                }
+                
+                self.asset = result
+                
+                OperationQueue.main.addOperation {
+                    if result.isFavorite {
+                        self.favoriteButton.title = "❤️"
+                    } else {
+                        self.favoriteButton.title = "🖤"
+                    }
+                }
+            })
+        }
+    }
+    
+    // asset의 isFavorite을 바꿔주고 나서도 호출되지 않음... 왜?
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+//        guard let photo = self.asset, let changeDetails = changeInstance.changeDetails(for: photo) else {
+//            return
+//        }
+//
+//        self.asset = changeDetails.objectAfterChanges
+    }
+    
     @IBAction func touchUpShareToolbarItem(_ sender: UIBarButtonItem) {
         guard let photo =  self.imageView.image else {
             return
@@ -30,6 +76,8 @@ class DetailViewController: UIViewController {
         guard let asset = self.asset else {
             return
         }
+        
+        self.localIdentifier = asset.localIdentifier
         
         if let creationDate = self.asset?.creationDate {
             let dateFormatter: DateFormatter = {
@@ -91,6 +139,8 @@ class DetailViewController: UIViewController {
                                     self.imageView.image = image
                                     if asset.isFavorite {
                                         self.favoriteButton.title = "❤️"
+                                    } else {
+                                        self.favoriteButton.title = "🖤"
                                     }
         })
     }

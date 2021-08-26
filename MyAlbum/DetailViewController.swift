@@ -15,6 +15,25 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
     var asset: PHAsset?
     var localIdentifier: String?
 
+    @IBAction func touchUpTrashToolbarItem(_ sender: UIBarButtonItem) {
+        guard let photo = self.asset else {
+            return
+        }
+        
+        let assets : NSMutableArray = NSMutableArray()
+        assets.add(photo)
+        
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.deleteAssets(assets)
+        }, completionHandler: { isDeleted, _ in
+            if isDeleted {
+                OperationQueue.main.addOperation {
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }
+        })
+    }
+    
     @IBAction func touchUpFavoriteToolbarItem(_ sender: UIBarButtonItem) {
         // Before editing an asset, use its canPerform(_:) method to see if the asset allows editing.
         guard let isEditable = self.asset?.canPerform(PHAssetEditOperation.properties) else {

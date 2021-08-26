@@ -23,7 +23,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
     
     @IBAction func touchUpTrashToolbarItem(_ sender: UIBarButtonItem) {
         // NSMutableArray?
-        let assets : NSMutableArray! = NSMutableArray()
+        let assets : NSMutableArray = NSMutableArray()
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: isOrderedByCreationDate)]
         

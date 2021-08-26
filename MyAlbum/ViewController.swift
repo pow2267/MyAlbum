@@ -29,14 +29,8 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
     }
     
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        guard let changes = changeInstance.changeDetails(for: self.albums!) else {
-            return
-        }
-        
-        albums = changes.fetchResultAfterChanges
-        
         OperationQueue.main.addOperation {
-            //
+            self.viewDidLoad()
         }
     }
     

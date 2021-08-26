@@ -51,7 +51,7 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
         }
     }
     
-    // asset의 isFavorite을 바꿔주고 나서도 호출되지 않음... 왜?
+    // asset의 isFavorite을 바꿔주고 나서도 호출되지 않음... 결국 completeHandler에서 전부 처리했는데... 이상하게 또 다른 컨트롤러에서는 이 함수가 변화를 감지함;
     func photoLibraryDidChange(_ changeInstance: PHChange) {
 //        guard let photo = self.asset, let changeDetails = changeInstance.changeDetails(for: photo) else {
 //            return

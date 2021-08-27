@@ -66,11 +66,7 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
     
     // asset의 isFavorite을 바꿔주고 나서도 호출되지 않음... 결국 completeHandler에서 전부 처리했는데... 이상하게 또 다른 컨트롤러에서는 이 함수가 변화를 감지함;
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-//        guard let photo = self.asset, let changeDetails = changeInstance.changeDetails(for: photo) else {
-//            return
-//        }
-//
-//        self.asset = changeDetails.objectAfterChanges
+
     }
     
     @IBAction func touchUpShareToolbarItem(_ sender: UIBarButtonItem) {
@@ -156,6 +152,19 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
                                         self.favoriteButton.title = "🖤"
                                     }
         })
+        
+        let tapgesture = UIPinchGestureRecognizer(target: self, action: #selector(pinchAction))
+        self.view.addGestureRecognizer(tapgesture)
+        // self.imageView.isUserInteractionEnabled = true
+    }
+    
+    @objc func pinchAction(_ sender: UIPinchGestureRecognizer) {
+        self.tabBarController?.tabBar.isHidden = true
+        self.navigationController?.navigationBar.isHidden = true
+        
+        self.imageView.transform = self.imageView.transform.scaledBy(x: sender.scale, y: sender.scale)
+        
+        sender.scale = 1.0
     }
     
 

@@ -227,26 +227,44 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YQU-kg-hB5">
-                                <rect key="frame" x="0.0" y="44" width="414" height="808"/>
-                            </imageView>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bh2-HM-w7U">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YQU-kg-hB5">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                    </imageView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="YQU-kg-hB5" firstAttribute="centerX" secondItem="bh2-HM-w7U" secondAttribute="centerX" id="4Og-Yj-sz8"/>
+                                    <constraint firstAttribute="bottom" secondItem="YQU-kg-hB5" secondAttribute="bottom" id="B4D-pc-GkJ"/>
+                                    <constraint firstItem="YQU-kg-hB5" firstAttribute="top" secondItem="bh2-HM-w7U" secondAttribute="top" id="Jd3-PD-3HP"/>
+                                    <constraint firstItem="YQU-kg-hB5" firstAttribute="leading" secondItem="bh2-HM-w7U" secondAttribute="leading" id="UTD-l2-BB3"/>
+                                    <constraint firstItem="YQU-kg-hB5" firstAttribute="centerY" secondItem="bh2-HM-w7U" secondAttribute="centerY" id="bQ4-jD-uBB"/>
+                                    <constraint firstAttribute="trailing" secondItem="YQU-kg-hB5" secondAttribute="trailing" id="rWR-35-tcg"/>
+                                </constraints>
+                            </scrollView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="fN1-ri-TlU"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="YQU-kg-hB5" firstAttribute="top" secondItem="fN1-ri-TlU" secondAttribute="top" id="Bkb-tr-RSc"/>
-                            <constraint firstItem="KfV-Gk-DFu" firstAttribute="top" secondItem="YQU-kg-hB5" secondAttribute="bottom" id="ElU-uW-wal"/>
+                            <constraint firstItem="bh2-HM-w7U" firstAttribute="top" secondItem="OqC-de-zl1" secondAttribute="top" id="1c1-8o-ZAL"/>
+                            <constraint firstItem="bh2-HM-w7U" firstAttribute="leading" secondItem="OqC-de-zl1" secondAttribute="leading" id="3gn-Sg-2hT"/>
                             <constraint firstItem="KfV-Gk-DFu" firstAttribute="leading" secondItem="fN1-ri-TlU" secondAttribute="leading" id="Jn6-Wy-Cj3"/>
-                            <constraint firstItem="fN1-ri-TlU" firstAttribute="trailing" secondItem="YQU-kg-hB5" secondAttribute="trailing" id="MT2-bM-Ono"/>
-                            <constraint firstAttribute="bottom" secondItem="KfV-Gk-DFu" secondAttribute="bottom" id="VDF-WJ-AT7"/>
+                            <constraint firstAttribute="bottom" secondItem="bh2-HM-w7U" secondAttribute="bottom" id="Ycw-Gk-Tpc"/>
                             <constraint firstItem="KfV-Gk-DFu" firstAttribute="trailing" secondItem="fN1-ri-TlU" secondAttribute="trailing" id="ZX7-fk-Gbi"/>
-                            <constraint firstItem="YQU-kg-hB5" firstAttribute="leading" secondItem="fN1-ri-TlU" secondAttribute="leading" id="fgg-Hp-Th7"/>
+                            <constraint firstAttribute="trailing" secondItem="bh2-HM-w7U" secondAttribute="trailing" id="aHA-xj-O6A"/>
+                            <constraint firstItem="KfV-Gk-DFu" firstAttribute="top" secondItem="fN1-ri-TlU" secondAttribute="top" constant="808" id="vTH-Ta-Z2D"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="Toolbar" destination="KfV-Gk-DFu" id="oxv-Zy-hQh"/>
                         <outlet property="favoriteButton" destination="cPc-8I-t8d" id="SLI-qJ-rXw"/>
                         <outlet property="imageView" destination="YQU-kg-hB5" id="Emb-Ab-rca"/>
+                        <outlet property="imageViewBottomConstraint" destination="B4D-pc-GkJ" id="tSA-F1-bvM"/>
+                        <outlet property="imageViewLeadingConstraint" destination="UTD-l2-BB3" id="Ob7-4k-0xq"/>
+                        <outlet property="imageViewTopConstraint" destination="Jd3-PD-3HP" id="krt-eZ-YRq"/>
+                        <outlet property="imageViewTrailingConstraint" destination="rWR-35-tcg" id="RUh-YR-nH2"/>
+                        <outlet property="scrollView" destination="bh2-HM-w7U" id="M6j-1m-bRf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QBI-e8-OU0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

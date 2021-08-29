@@ -8,11 +8,16 @@
 import UIKit
 import Photos
 
-class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
+class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UIScrollViewDelegate {
     
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var favoriteButton: UIBarButtonItem!
     @IBOutlet weak var Toolbar: UIToolbar!
+    @IBOutlet weak var imageViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var imageViewBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var imageViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var imageViewTrailingConstraint: NSLayoutConstraint!
     var asset: PHAsset?
     var localIdentifier: String?
     
@@ -171,20 +176,48 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
                                     }
         })
         
-        let tapgesture = UIPinchGestureRecognizer(target: self, action: #selector(pinchAction))
-        self.view.addGestureRecognizer(tapgesture)
-        // self.imageView.isUserInteractionEnabled = true
+        self.scrollView.minimumZoomScale = 1.0
+        self.scrollView.maximumZoomScale = 5.0
+        scrollView.delegate = self
+        
+        updateConstrainsForSize(self.view.bounds.size)
+        updateMinZoomScaleForSize(self.view.bounds.size)
     }
     
-    @objc func pinchAction(_ sender: UIPinchGestureRecognizer) {
-        self.Toolbar.isHidden = true
-        self.navigationController?.navigationBar.isHidden = true
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
-        self.imageView.backgroundColor = UIColor.black
-        self.view.backgroundColor = UIColor.black
-        self.imageView.transform = self.imageView.transform.scaledBy(x: sender.scale, y: sender.scale)
+        updateConstrainsForSize(self.view.bounds.size)
+        updateMinZoomScaleForSize(self.view.bounds.size)
+    }
+    
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return self.imageView
+    }
+    
+    func updateMinZoomScaleForSize(_ size: CGSize) {
+        let widthScale = size.width / self.imageView.bounds.width
+        let heightScale = size.height / self.imageView.bounds.height
+        let minScale = min(widthScale, heightScale)
         
-        sender.scale = 1.0
+        self.scrollView.minimumZoomScale = minScale
+        self.scrollView.zoomScale = minScale
+    }
+    
+    func updateConstrainsForSize(_ size: CGSize) {
+        let xOffset = max(0, (size.width - self.imageView.frame.width) / 2)
+        self.imageViewLeadingConstraint.constant = xOffset
+        self.imageViewTrailingConstraint.constant = xOffset
+        
+        let yOffset = max(0, (size.height - self.imageView.frame.height) / 2)
+        self.imageViewTopConstraint.constant = yOffset
+        self.imageViewBottomConstraint.constant = yOffset
+        
+        view.layoutIfNeeded()
+    }
+    
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        updateConstrainsForSize(self.view.bounds.size)
     }
     
 

@@ -12,8 +12,26 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var favoriteButton: UIBarButtonItem!
+    @IBOutlet weak var Toolbar: UIToolbar!
     var asset: PHAsset?
     var localIdentifier: String?
+    
+    @IBAction func touchUpView() {
+        if self.view.backgroundColor == UIColor.black {
+            self.view.backgroundColor = UIColor.white
+        } else {
+            self.view.backgroundColor = UIColor.black
+        }
+        
+        if self.imageView.backgroundColor == UIColor.black {
+            self.imageView.backgroundColor = UIColor.white
+        } else {
+            self.imageView.backgroundColor = UIColor.black
+        }
+        
+        self.Toolbar.isHidden = !self.Toolbar.isHidden
+        self.navigationController?.navigationBar.isHidden = !(self.navigationController?.navigationBar.isHidden ?? false)
+    }
 
     @IBAction func touchUpTrashToolbarItem(_ sender: UIBarButtonItem) {
         guard let photo = self.asset else {
@@ -159,9 +177,11 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver {
     }
     
     @objc func pinchAction(_ sender: UIPinchGestureRecognizer) {
-        self.tabBarController?.tabBar.isHidden = true
+        self.Toolbar.isHidden = true
         self.navigationController?.navigationBar.isHidden = true
         
+        self.imageView.backgroundColor = UIColor.black
+        self.view.backgroundColor = UIColor.black
         self.imageView.transform = self.imageView.transform.scaledBy(x: sender.scale, y: sender.scale)
         
         sender.scale = 1.0

@@ -244,6 +244,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="Toolbar" destination="KfV-Gk-DFu" id="oxv-Zy-hQh"/>
                         <outlet property="favoriteButton" destination="cPc-8I-t8d" id="SLI-qJ-rXw"/>
                         <outlet property="imageView" destination="YQU-kg-hB5" id="Emb-Ab-rca"/>
                     </connections>

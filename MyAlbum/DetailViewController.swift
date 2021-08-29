@@ -205,11 +205,12 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
     }
     
     func updateConstrainsForSize(_ size: CGSize) {
-        let xOffset = max(0, (size.width - self.imageView.frame.width) / 2)
+        // min으로 하면 minimumZoomScale이 1로 고정, max면 더 확대 가능
+        let xOffset = min(0, (size.width - self.imageView.frame.width) / 2)
         self.imageViewLeadingConstraint.constant = xOffset
         self.imageViewTrailingConstraint.constant = xOffset
         
-        let yOffset = max(0, (size.height - self.imageView.frame.height) / 2)
+        let yOffset = min(0, (size.height - self.imageView.frame.height) / 2)
         self.imageViewTopConstraint.constant = yOffset
         self.imageViewBottomConstraint.constant = yOffset
         

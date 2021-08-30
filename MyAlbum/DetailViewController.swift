@@ -13,29 +13,22 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var favoriteButton: UIBarButtonItem!
-    @IBOutlet weak var Toolbar: UIToolbar!
-    @IBOutlet weak var imageViewTopConstraint: NSLayoutConstraint!
-    @IBOutlet weak var imageViewBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var imageViewLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var imageViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var toolbar: UIToolbar!
+    
     var asset: PHAsset?
     var localIdentifier: String?
     
-    @IBAction func touchUpView() {
+    // touchedBegan은 scroll view에서는 동작하지 않음(scroll에서 single touch를 막음)
+    @objc func showHideBars() {
         if self.view.backgroundColor == UIColor.black {
+            self.navigationController?.navigationBar.isHidden = false
+            self.toolbar.isHidden = false
             self.view.backgroundColor = UIColor.white
         } else {
+            self.navigationController?.navigationBar.isHidden = true
+            self.toolbar.isHidden = true
             self.view.backgroundColor = UIColor.black
         }
-        
-        if self.imageView.backgroundColor == UIColor.black {
-            self.imageView.backgroundColor = UIColor.white
-        } else {
-            self.imageView.backgroundColor = UIColor.black
-        }
-        
-        self.Toolbar.isHidden = !self.Toolbar.isHidden
-        self.navigationController?.navigationBar.isHidden = !(self.navigationController?.navigationBar.isHidden ?? false)
     }
 
     @IBAction func touchUpTrashToolbarItem(_ sender: UIBarButtonItem) {
@@ -104,6 +97,9 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let singleTapGuestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showHideBars))
+        self.scrollView.addGestureRecognizer(singleTapGuestureRecognizer)
 
         guard let asset = self.asset else {
             return
@@ -186,6 +182,10 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
     }
     
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        self.navigationController?.navigationBar.isHidden = true
+        self.toolbar.isHidden = true
+        self.view.backgroundColor = UIColor.black
+        
         if scrollView.zoomScale > 1 {
             if let image = self.imageView.image {
                 let widthRatio = self.imageView.frame.width / image.size.width

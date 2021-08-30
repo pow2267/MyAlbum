@@ -257,10 +257,10 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="Toolbar" destination="KfV-Gk-DFu" id="oxv-Zy-hQh"/>
                         <outlet property="favoriteButton" destination="cPc-8I-t8d" id="SLI-qJ-rXw"/>
                         <outlet property="imageView" destination="gp6-KT-6Rf" id="Xpf-Tx-TsF"/>
                         <outlet property="scrollView" destination="J70-tz-MWz" id="PrC-mB-iTq"/>
+                        <outlet property="toolbar" destination="KfV-Gk-DFu" id="oxv-Zy-hQh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QBI-e8-OU0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

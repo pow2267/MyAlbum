@@ -179,46 +179,38 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
         self.scrollView.minimumZoomScale = 1.0
         self.scrollView.maximumZoomScale = 5.0
         scrollView.delegate = self
-        
-        updateConstrainsForSize(self.view.bounds.size)
-        updateMinZoomScaleForSize(self.view.bounds.size)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        updateConstrainsForSize(self.view.bounds.size)
-        updateMinZoomScaleForSize(self.view.bounds.size)
     }
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.imageView
     }
     
-    func updateMinZoomScaleForSize(_ size: CGSize) {
-        let widthScale = size.width / self.imageView.bounds.width
-        let heightScale = size.height / self.imageView.bounds.height
-        let minScale = min(widthScale, heightScale)
-        
-        self.scrollView.minimumZoomScale = minScale
-        self.scrollView.zoomScale = minScale
-    }
-    
-    func updateConstrainsForSize(_ size: CGSize) {
-        // min으로 하면 minimumZoomScale이 1로 고정, max면 더 확대 가능
-        let xOffset = min(0, (size.width - self.imageView.frame.width) / 2)
-        self.imageViewLeadingConstraint.constant = xOffset
-        self.imageViewTrailingConstraint.constant = xOffset
-        
-        let yOffset = min(0, (size.height - self.imageView.frame.height) / 2)
-        self.imageViewTopConstraint.constant = yOffset
-        self.imageViewBottomConstraint.constant = yOffset
-        
-        view.layoutIfNeeded()
-    }
-    
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        updateConstrainsForSize(self.view.bounds.size)
+        if scrollView.zoomScale > 1 {
+            if let image = self.imageView.image {
+                let widthRatio = self.imageView.frame.width / image.size.width
+                let heightRatio = self.imageView.frame.height / image.size.height
+                
+                let ratio = widthRatio < heightRatio ? widthRatio : heightRatio
+                
+                let newWidth = image.size.width * ratio
+                let newHeight = image.size.height * ratio
+                
+                // boolean
+                let conditionLeft = newWidth * scrollView.zoomScale > self.imageView.frame.width
+                
+                let left = (conditionLeft ? newWidth - self.imageView.frame.width : scrollView.frame.width - scrollView.contentSize.width) * 0.5
+                
+                // boolean
+                let conditionTop = newHeight * scrollView.zoomScale > self.imageView.frame.height
+                
+                let top = (conditionTop ? newHeight - self.imageView.frame.height : scrollView.frame.height - scrollView.contentSize.height) * 0.5
+                
+                scrollView.contentInset = UIEdgeInsets(top: top, left: left, bottom: top, right: left)
+            }
+        } else {
+            scrollView.contentInset = UIEdgeInsets.zero
+        }
     }
     
 

@@ -174,12 +174,12 @@
                         <viewLayoutGuide key="safeArea" id="5jA-bZ-YHg"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="g9g-X3-93h" secondAttribute="bottom" id="9pi-3k-7zz"/>
                             <constraint firstItem="5jA-bZ-YHg" firstAttribute="trailing" secondItem="eHJ-IH-nml" secondAttribute="trailing" id="BK7-47-S4a"/>
                             <constraint firstItem="g9g-X3-93h" firstAttribute="top" secondItem="eHJ-IH-nml" secondAttribute="bottom" id="FP2-XS-gcx"/>
                             <constraint firstItem="eHJ-IH-nml" firstAttribute="top" secondItem="5jA-bZ-YHg" secondAttribute="top" id="Gwq-2e-phx"/>
                             <constraint firstItem="g9g-X3-93h" firstAttribute="trailing" secondItem="eHJ-IH-nml" secondAttribute="trailing" id="LG9-fs-NCN"/>
                             <constraint firstItem="g9g-X3-93h" firstAttribute="leading" secondItem="eHJ-IH-nml" secondAttribute="leading" id="Uwg-8A-ac6"/>
-                            <constraint firstAttribute="bottomMargin" secondItem="g9g-X3-93h" secondAttribute="bottom" constant="-34" id="gqe-df-Yfm"/>
                             <constraint firstItem="eHJ-IH-nml" firstAttribute="leading" secondItem="5jA-bZ-YHg" secondAttribute="leading" id="kGW-vE-INh"/>
                         </constraints>
                     </view>

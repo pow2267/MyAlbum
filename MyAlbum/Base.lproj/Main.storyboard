@@ -28,26 +28,32 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="DlX-mw-A62" customClass="PhotoListCollectionViewCell" customModule="MyAlbum" customModuleProvider="target">
-                                        <rect key="frame" x="87" y="0.0" width="240" height="340"/>
+                                        <rect key="frame" x="87" y="0.0" width="240" height="280"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="g6x-c2-UtY">
-                                            <rect key="frame" x="0.0" y="0.0" width="240" height="340"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="240" height="280"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="iW6-rW-U4D">
-                                                    <rect key="frame" x="0.0" y="0.0" width="240" height="340"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="240" height="280"/>
                                                     <subviews>
-                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="AcE-F8-2vk">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="AcE-F8-2vk">
                                                             <rect key="frame" x="0.0" y="0.0" width="240" height="240"/>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tu5-6e-KFh">
-                                                            <rect key="frame" x="0.0" y="240" width="240" height="50"/>
+                                                            <rect key="frame" x="0.0" y="240" width="240" height="20"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="20" id="KLf-zb-Axv"/>
+                                                            </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hQj-HW-NcE">
-                                                            <rect key="frame" x="0.0" y="290" width="240" height="50"/>
+                                                            <rect key="frame" x="0.0" y="260" width="240" height="20"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="20" id="KxA-9v-5lc"/>
+                                                            </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>

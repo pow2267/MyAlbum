@@ -56,7 +56,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
             cell.countLabel.text = String(collections!.photosCount)
             
             if let asset = PHAsset.fetchAssets(in: collections!, options: nil).lastObject {
-                let half: CGFloat = (UIScreen.main.bounds.width - 50) / 2.0
+                let half = cell.frame.width
                 
                 let imageOption: PHImageRequestOptions = PHImageRequestOptions()
                 imageOption.resizeMode = .exact
@@ -146,7 +146,14 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
         flowLayout.minimumInteritemSpacing = 10
         flowLayout.minimumLineSpacing = 10
         
-        let half: CGFloat = (UIScreen.main.bounds.width - 50) / 2.0
+        let width = UIScreen.main.bounds.width
+        let height = UIScreen.main.bounds.height
+        var half: CGFloat = (width - 50) / 2.0
+        
+        // 가로 모드일 때
+        if width > height {
+            half = (height - 50) / 2.0
+        }
         
         flowLayout.itemSize = CGSize(width: half, height: half + 40)
         

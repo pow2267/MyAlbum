@@ -196,7 +196,7 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
         imageOption.resizeMode = .exact
         imageOption.isSynchronous = true
         
-        let third: CGFloat = floor((UIScreen.main.bounds.width - 10) / 3.0)
+        let third = cell.frame.width
         
         imageManager.requestImage(for: photo,
                                   targetSize: CGSize(width: third, height: third),
@@ -251,7 +251,14 @@ class AlbumViewController: UIViewController, UICollectionViewDataSource, UIColle
             self.collectionView.reloadData()
         }
         
-        let third: CGFloat = floor((UIScreen.main.bounds.width - 10) / 3.0)
+        let width = UIScreen.main.bounds.width
+        let height = UIScreen.main.bounds.height
+        var third: CGFloat = floor((width - 10) / 3.0)
+        
+        if width > height {
+            third = floor((height - 10) / 3.0)
+        }
+        
         let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumInteritemSpacing = 5
         flowLayout.minimumLineSpacing = 5

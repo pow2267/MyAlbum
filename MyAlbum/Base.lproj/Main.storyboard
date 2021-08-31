@@ -208,11 +208,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="J70-tz-MWz">
-                                <rect key="frame" x="0.0" y="44" width="414" height="808"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" contentInsetAdjustmentBehavior="never" translatesAutoresizingMaskIntoConstraints="NO" id="J70-tz-MWz">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="gp6-KT-6Rf">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                     </imageView>
                                 </subviews>
                                 <constraints>
@@ -254,12 +254,12 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="KfV-Gk-DFu" secondAttribute="bottom" id="0VZ-AI-m07"/>
-                            <constraint firstItem="J70-tz-MWz" firstAttribute="leading" secondItem="fN1-ri-TlU" secondAttribute="leading" id="4Fe-J8-Hab"/>
-                            <constraint firstItem="KfV-Gk-DFu" firstAttribute="top" secondItem="J70-tz-MWz" secondAttribute="bottom" id="C54-sp-s4i"/>
+                            <constraint firstItem="J70-tz-MWz" firstAttribute="leading" secondItem="OqC-de-zl1" secondAttribute="leading" id="4Fe-J8-Hab"/>
+                            <constraint firstItem="J70-tz-MWz" firstAttribute="bottom" secondItem="OqC-de-zl1" secondAttribute="bottom" id="C54-sp-s4i"/>
                             <constraint firstItem="KfV-Gk-DFu" firstAttribute="trailing" secondItem="J70-tz-MWz" secondAttribute="trailing" id="FVK-iH-Tcm"/>
-                            <constraint firstItem="J70-tz-MWz" firstAttribute="top" secondItem="fN1-ri-TlU" secondAttribute="top" id="p8N-ye-Uus"/>
+                            <constraint firstItem="J70-tz-MWz" firstAttribute="top" secondItem="OqC-de-zl1" secondAttribute="top" id="p8N-ye-Uus"/>
                             <constraint firstItem="KfV-Gk-DFu" firstAttribute="leading" secondItem="J70-tz-MWz" secondAttribute="leading" id="pKT-ZW-XzS"/>
-                            <constraint firstItem="fN1-ri-TlU" firstAttribute="trailing" secondItem="J70-tz-MWz" secondAttribute="trailing" id="tRz-L1-OFx"/>
+                            <constraint firstAttribute="trailing" secondItem="J70-tz-MWz" secondAttribute="trailing" id="tRz-L1-OFx"/>
                         </constraints>
                     </view>
                     <connections>

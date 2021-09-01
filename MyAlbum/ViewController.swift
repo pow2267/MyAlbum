@@ -101,7 +101,8 @@ extension ViewController: UICollectionViewDataSource {
             preconditionFailure("콜렉션 뷰 셀 생성 오류")
         }
         
-        // Q. 앱이 가장 처음 로드될 때 몇몇 앨범의 이미지가 빠르게 바뀌곤 하는데, 비동기로 앨범의 썸네일을 불러와서 이런 현상이 생기는 걸까요?
+        /* Q. 앱이 가장 처음 로드될 때 몇몇 앨범의 이미지가 빠르게 바뀌곤 하는데, 비동기로 앨범의 썸네일을 불러와서 이런 현상이 생기는 걸까요?
+            만약 비동기가 원인이 맞다면, 깜빡이는 현상을 방지하기 위해서 어떻게 해야할까요? */
         OperationQueue().addOperation {
             let collections: PHAssetCollection?
             

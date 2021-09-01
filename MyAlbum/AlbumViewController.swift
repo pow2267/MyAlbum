@@ -223,34 +223,37 @@ extension AlbumViewController: UICollectionViewDataSource {
             preconditionFailure("앨범 불러오기 오류")
         }
         
-        let fetchOptions = PHFetchOptions()
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: isOrderedByCreationDate)]
-        
-        let photo = PHAsset.fetchAssets(in: collection, options: fetchOptions).object(at: indexPath.row)
-        
-        let imageOption: PHImageRequestOptions = PHImageRequestOptions()
-        imageOption.resizeMode = .exact
-        imageOption.isSynchronous = true
-        
-        let length = cell.frame.width
-        
-        imageManager.requestImage(for: photo,
-                                  targetSize: CGSize(width: length, height: length),
-                                  contentMode: .aspectFill,
-                                  options: imageOption,
-                                  resultHandler: { image, _ in
-                                    cell.imageView.image = image
-        })
-        
-        // 다중 선택시 테두리 표시
-        cell.layer.borderColor = UIColor.red.cgColor
-        
-        if self.isSelectMode && self.selectedCells.contains(indexPath) {
-            cell.layer.borderWidth = 2
-            cell.imageView.alpha = 0.75
-        } else {
-            cell.layer.borderWidth = 0
-            cell.imageView.alpha = 1
+        // ViewController에서와 마찬가지로 셀 속 이미지들이 깜빡이면서 바뀌는 듯한 현상이 나타납니다. 비동기 처리가 원인일까요?
+        OperationQueue().addOperation {
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: self.isOrderedByCreationDate)]
+            
+            let photo = PHAsset.fetchAssets(in: collection, options: fetchOptions).object(at: indexPath.row)
+            
+            let imageOption: PHImageRequestOptions = PHImageRequestOptions()
+            imageOption.resizeMode = .exact
+            imageOption.isSynchronous = true
+            
+            OperationQueue.main.addOperation {
+                self.imageManager.requestImage(for: photo,
+                                          targetSize: CGSize(width: cell.frame.width, height: cell.frame.height),
+                                          contentMode: .aspectFill,
+                                          options: imageOption,
+                                          resultHandler: { image, _ in
+                                            cell.imageView.image = image
+                })
+                
+                // 다중 선택시 테두리 표시
+                cell.layer.borderColor = UIColor.red.cgColor
+                
+                if self.isSelectMode && self.selectedCells.contains(indexPath) {
+                    cell.layer.borderWidth = 2
+                    cell.imageView.alpha = 0.75
+                } else {
+                    cell.layer.borderWidth = 0
+                    cell.imageView.alpha = 1
+                }
+            }
         }
         
         return cell

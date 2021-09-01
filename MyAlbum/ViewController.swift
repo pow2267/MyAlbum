@@ -20,15 +20,19 @@ class ViewController: UIViewController {
     // 포토 앨범 조회
     func requestCollection() {
         // Recents, Favorites는 사용자 정의 앨범이 아닌 스마트 앨범이라 따로 조회
-        let recents: PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
+        let queue = OperationQueue()
         
-        let favorites: PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
+        queue.addOperation {
+            self.recents = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
+        }
         
-        let albums: PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
+        queue.addOperation {
+            self.favorites = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
+        }
         
-        self.recents = recents
-        self.favorites = favorites
-        self.albums = albums
+        queue.addOperation {
+            self.albums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
+        }
     }
 
     override func viewDidLoad() {

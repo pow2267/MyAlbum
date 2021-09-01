@@ -8,7 +8,7 @@
 import UIKit
 import Photos
 
-class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UIScrollViewDelegate {
+class DetailViewController: UIViewController{
     
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var imageView: UIImageView!
@@ -18,19 +18,6 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
     var asset: PHAsset?
     var localIdentifier: String?
     
-    // touchedBegan은 scroll view에서는 동작하지 않음(scroll에서 single touch를 막음)
-    @objc func showHideBars() {
-        if self.view.backgroundColor == UIColor.black {
-            self.navigationController?.navigationBar.isHidden = false
-            self.toolbar.isHidden = false
-            self.view.backgroundColor = UIColor.white
-        } else {
-            self.navigationController?.navigationBar.isHidden = true
-            self.toolbar.isHidden = true
-            self.view.backgroundColor = UIColor.black
-        }
-    }
-
     @IBAction func touchUpTrashToolbarItem(_ sender: UIBarButtonItem) {
         guard let photo = self.asset else {
             return
@@ -51,7 +38,7 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
     }
     
     @IBAction func touchUpFavoriteToolbarItem(_ sender: UIBarButtonItem) {
-        // Before editing an asset, use its canPerform(_:) method to see if the asset allows editing.
+        // asset을 수정하기 전에, canPerForm(_:) 메소드를 사용해 해당 asset이 수정 가능한지 아닌지 확인해야 함
         guard let isEditable = self.asset?.canPerform(PHAssetEditOperation.properties) else {
             return
         }
@@ -68,6 +55,8 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
                 if isCompleted, let localIdentifier = self.localIdentifier, let result = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil).firstObject {
                     self.asset = result
                     
+                    /* Q. asset의 isFavorite값을 바꿔주고 나서도 이 뷰 컨트롤러에서 photoLibraryDidChange가 호출되지 않습니다
+                    결국 completeHandler에서 전부 처리했는데, 이 뷰가 아닌 다른 뷰 컨트롤러에서는 photoLibraryDidChange 함수가 변화를 감지합니다. 이유가 뭔가요? */
                     OperationQueue.main.addOperation {
                         if result.isFavorite {
                             self.favoriteButton.title = "❤️"
@@ -80,11 +69,6 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
         }
     }
     
-    // asset의 isFavorite을 바꿔주고 나서도 호출되지 않음... 결국 completeHandler에서 전부 처리했는데... 이상하게 또 다른 컨트롤러에서는 이 함수가 변화를 감지함;
-    func photoLibraryDidChange(_ changeInstance: PHChange) {
-
-    }
-    
     @IBAction func touchUpShareToolbarItem(_ sender: UIBarButtonItem) {
         guard let photo =  self.imageView.image else {
             return
@@ -95,11 +79,25 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
         self.present(activityViewController, animated: true, completion: nil)
     }
     
+    /* touchedBegan은 scroll view에서는 동작하지 않음(scroll에서 single touch를 막음)
+    그래서 gestureRecognizer를 따로 추가함*/
+    @objc func showHideBars() {
+        if self.view.backgroundColor == UIColor.black {
+            self.navigationController?.navigationBar.isHidden = false
+            self.toolbar.isHidden = false
+            self.view.backgroundColor = UIColor.white
+        } else {
+            self.navigationController?.navigationBar.isHidden = true
+            self.toolbar.isHidden = true
+            self.view.backgroundColor = UIColor.black
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let singleTapGuestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showHideBars))
-        self.scrollView.addGestureRecognizer(singleTapGuestureRecognizer)
+        let tapGuestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showHideBars))
+        self.scrollView.addGestureRecognizer(tapGuestureRecognizer)
 
         guard let asset = self.asset else {
             return
@@ -124,6 +122,7 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
                 return formatter
             }()
             
+            // 두 줄짜리 타이틀 만들기
             let titleLabel = UILabel.init(frame: CGRect.zero)
             titleLabel.backgroundColor = UIColor.clear
             titleLabel.textColor = UIColor.black
@@ -142,6 +141,7 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
             
             let twoLineTitleView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(titleLabel.frame.size.width, subTitleLabel.frame.size.width) , height: (titleLabel.frame.height + subTitleLabel.frame.height)))
             
+            // 타이틀 가운데 정렬
             if titleLabel.frame.width >= subTitleLabel.frame.width {
                 var adjustment = subTitleLabel.frame
                 adjustment.origin.x = twoLineTitleView.frame.origin.x + (twoLineTitleView.frame.width/2) - (subTitleLabel.frame.width/2)
@@ -176,7 +176,9 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
         self.scrollView.maximumZoomScale = 5.0
         scrollView.delegate = self
     }
-    
+}
+
+extension DetailViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.imageView
     }
@@ -186,6 +188,7 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
         self.toolbar.isHidden = true
         self.view.backgroundColor = UIColor.black
         
+        // 코드 참고: https://www.youtube.com/watch?v=tBsUJzV1hmc
         if scrollView.zoomScale > 1 {
             if let image = self.imageView.image {
                 let widthRatio = self.imageView.frame.width / image.size.width
@@ -212,16 +215,4 @@ class DetailViewController: UIViewController, PHPhotoLibraryChangeObserver, UISc
             scrollView.contentInset = UIEdgeInsets.zero
         }
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

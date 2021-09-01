@@ -110,7 +110,7 @@ class AlbumViewController: UIViewController {
         }
         
         var photos: PHFetchResult<PHAssetCollection>? = nil
-        
+        // Q. 사진을 불러오는 부분과 불러온 사진을 사용하는 부분(func collectionView)이 다른데 이때는 어떻게 비동기 처리를 해야하나요?
         if title == "Recents" {
             photos = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
         } else if title == "Favorites" {

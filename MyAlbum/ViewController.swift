@@ -8,15 +8,18 @@
 import UIKit
 import Photos
 
-class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibraryChangeObserver {
+class ViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
+    
     var recents: PHFetchResult<PHAssetCollection>?
     var favorites: PHFetchResult<PHAssetCollection>?
     var albums: PHFetchResult<PHAssetCollection>?
     let imageManager: PHCachingImageManager = PHCachingImageManager()
     
+    // 포토 앨범 조회
     func requestCollection() {
+        // Recents, Favorites는 사용자 정의 앨범이 아닌 스마트 앨범이라 따로 조회
         let recents: PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
         
         let favorites: PHFetchResult<PHAssetCollection> = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
@@ -27,13 +30,77 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
         self.favorites = favorites
         self.albums = albums
     }
-    
-    func photoLibraryDidChange(_ changeInstance: PHChange) {
-        OperationQueue.main.addOperation {
-            self.viewDidLoad()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let photoAuthorization = PHPhotoLibrary.authorizationStatus()
+        
+        // 포토 라이브러리 권한 체크
+        switch photoAuthorization {
+        case .authorized, .limited:
+            self.requestCollection()
+            OperationQueue.main.addOperation {
+                self.collectionView.reloadData()
+            }
+            
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization({ (state) in
+                switch state {
+                case .authorized, .limited:
+                    self.requestCollection()
+                    OperationQueue.main.addOperation {
+                        self.collectionView.reloadData()
+                    }
+                    
+                default:
+                    break
+                }
+            })
+            
+        default:
+            break
         }
+        
+        // 콜렉션 뷰 레이아웃 설정
+        let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        flowLayout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        flowLayout.minimumInteritemSpacing = 10
+        flowLayout.minimumLineSpacing = 10
+        
+        let width = UIScreen.main.bounds.width
+        let height = UIScreen.main.bounds.height
+        var length: CGFloat = (width - 50) / 2.0
+        
+        // 가로 모드일 때
+        if width > height {
+            length = (height - 50) / 2.0
+        }
+        
+        // +40은 밑에 앨범 이름과 사진 개수 label용
+        flowLayout.itemSize = CGSize(width: length, height: length + 40)
+        
+        self.collectionView.collectionViewLayout = flowLayout
+        
+        // 유저의 모든 Photo Assets을 불러오기 위해
+        PHPhotoLibrary.shared().register(self)
     }
     
+    // MARK: - Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let albumViewController: AlbumViewController = segue.destination as? AlbumViewController else {
+            return
+        }
+        
+        guard let cell: PhotoListCollectionViewCell = sender as? PhotoListCollectionViewCell else {
+            return
+        }
+        
+        albumViewController.albumTitle = cell.titleLabel.text
+    }
+}
+
+extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell: PhotoListCollectionViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? PhotoListCollectionViewCell else {
@@ -48,7 +115,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
         case 1:
             collections = self.favorites?.firstObject
         default:
-            collections = self.albums?.object(at: indexPath.row - 2)
+            collections = self.albums?.object(at: indexPath.row - 2) // 0, 1번이 각각 Recents, Favorites이라서 index에서 2를 빼줌
         }
         
         if collections != nil {
@@ -75,6 +142,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
         } else {
             cell.imageView.image = nil
         }
+        
         // 이미지 뷰의 가장자리 둥글게
         cell.imageView.layer.cornerRadius = cell.imageView.frame.width / 40
         
@@ -82,103 +150,21 @@ class ViewController: UIViewController, UICollectionViewDataSource, PHPhotoLibra
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (self.albums?.count ?? 0) + 2
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        let photoAuthorization = PHPhotoLibrary.authorizationStatus()
-        
-        switch photoAuthorization {
-        case .authorized:
-            print("접근 허가 됨")
-            self.requestCollection()
-            OperationQueue.main.addOperation {
-                self.collectionView.reloadData()
-            }
-            
-        case .limited:
-            print("제한 접근 허가")
-            self.requestCollection()
-            OperationQueue.main.addOperation {
-                self.collectionView.reloadData()
-            }
-            
-        case .denied:
-            print("접근 불허")
-            
-        case .notDetermined:
-            print("아직 응답하지 않음")
-            PHPhotoLibrary.requestAuthorization({ (state) in
-                switch state {
-                case .authorized:
-                    print("사용자가 허가 함")
-                    self.requestCollection()
-                    OperationQueue.main.addOperation {
-                        self.collectionView.reloadData()
-                    }
-                    
-                case .limited:
-                    print("제한 접근 허가")
-                    self.requestCollection()
-                    OperationQueue.main.addOperation {
-                        self.collectionView.reloadData()
-                    }
-                    
-                case .denied:
-                    print("사용자가 불허 함")
-                    
-                default:
-                    break
-                }
-            })
-            
-        case .restricted:
-            print("접근 제한")
-            
-        default:
-            break
-        }
-        
-        let flowLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        flowLayout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-        flowLayout.minimumInteritemSpacing = 10
-        flowLayout.minimumLineSpacing = 10
-        
-        let width = UIScreen.main.bounds.width
-        let height = UIScreen.main.bounds.height
-        var half: CGFloat = (width - 50) / 2.0
-        
-        // 가로 모드일 때
-        if width > height {
-            half = (height - 50) / 2.0
-        }
-        
-        flowLayout.itemSize = CGSize(width: half, height: half + 40)
-        
-        self.collectionView.collectionViewLayout = flowLayout
-        
-        // 유저의 모든 Photo Assets을 불러오기 위해
-        PHPhotoLibrary.shared().register(self)
-    }
-    
-    // MARK: - Navigation
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let albumViewController: AlbumViewController = segue.destination as? AlbumViewController else {
-            return
-        }
-        
-        guard let cell: PhotoListCollectionViewCell = sender as? PhotoListCollectionViewCell else {
-            return
-        }
-        
-        albumViewController.albumTitle = cell.titleLabel.text
+        return (self.albums?.count ?? 0) + 2 // Recents, Favorites 폴더 2개 포함
     }
 }
 
-// 어느 파일에 있어야 하나?
+extension ViewController: PHPhotoLibraryChangeObserver {
+    // 포토 라이브러리에 변화를 감지하면 view reload
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+        OperationQueue.main.addOperation {
+            self.viewDidLoad()
+        }
+    }
+}
+
+// AssetCollection에 속한 asset의 개수를 구하기 위해
+// Q. 아래 코드는 ViewController 클래스가 아닌데 어느 파일에 위치해야 하나요?
 extension PHAssetCollection {
     var photosCount: Int {
         let fetchOptions = PHFetchOptions()

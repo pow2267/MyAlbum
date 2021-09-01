@@ -20,19 +20,9 @@ class ViewController: UIViewController {
     // 포토 앨범 조회
     func requestCollection() {
         // Recents, Favorites는 사용자 정의 앨범이 아닌 스마트 앨범이라 따로 조회
-        let queue = OperationQueue()
-        
-        queue.addOperation {
-            self.recents = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
-        }
-        
-        queue.addOperation {
-            self.favorites = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
-        }
-        
-        queue.addOperation {
-            self.albums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-        }
+        self.recents = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
+        self.favorites = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
+        self.albums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
     }
 
     override func viewDidLoad() {
@@ -111,40 +101,43 @@ extension ViewController: UICollectionViewDataSource {
             preconditionFailure("콜렉션 뷰 셀 생성 오류")
         }
         
-        let collections: PHAssetCollection?
-        
-        switch indexPath.row {
-        case 0:
-            collections = self.recents?.firstObject
-        case 1:
-            collections = self.favorites?.firstObject
-        default:
-            collections = self.albums?.object(at: indexPath.row - 2) // 0, 1번이 각각 Recents, Favorites이라서 index에서 2를 빼줌
-        }
-        
-        if collections != nil {
-            cell.titleLabel.text = collections!.localizedTitle
-            cell.countLabel.text = String(collections!.photosCount)
+        // Q. 앱이 가장 처음 로드될 때 몇몇 앨범의 이미지가 빠르게 바뀌곤 하는데, 비동기로 앨범의 썸네일을 불러와서 이런 현상이 생기는 걸까요?
+        OperationQueue().addOperation {
+            let collections: PHAssetCollection?
             
-            if let asset = PHAsset.fetchAssets(in: collections!, options: nil).lastObject {
-                let half = cell.frame.width
-                
-                let imageOption: PHImageRequestOptions = PHImageRequestOptions()
-                imageOption.resizeMode = .exact
-                imageOption.isSynchronous = true
-
-                imageManager.requestImage(for: asset,
-                                          targetSize: CGSize(width: half, height: half),
-                                          contentMode: .aspectFill,
-                                          options: imageOption,
-                                          resultHandler: { image, _ in
-                                                cell.imageView.image = image
-                })
+            switch indexPath.row {
+            case 0:
+                collections = self.recents?.firstObject
+            case 1:
+                collections = self.favorites?.firstObject
+            default:
+                collections = self.albums?.object(at: indexPath.row - 2) // 0, 1번이 각각 Recents, Favorites이라서 index에서 2를 빼줌
+            }
+            
+            if collections != nil {
+                if let asset = PHAsset.fetchAssets(in: collections!, options: nil).lastObject {
+                    OperationQueue.main.addOperation {
+                        cell.titleLabel.text = collections!.localizedTitle
+                        cell.countLabel.text = String(collections!.photosCount)
+                        
+                        let imageOption: PHImageRequestOptions = PHImageRequestOptions()
+                        imageOption.resizeMode = .exact
+                        imageOption.isSynchronous = true
+                        
+                        self.imageManager.requestImage(for: asset,
+                                                  targetSize: CGSize(width: cell.frame.width, height: cell.frame.height),
+                                                  contentMode: .aspectFill,
+                                                  options: imageOption,
+                                                  resultHandler: { image, _ in
+                                                        cell.imageView.image = image
+                        })
+                    }
+                } else {
+                    cell.imageView.image = nil
+                }
             } else {
                 cell.imageView.image = nil
             }
-        } else {
-            cell.imageView.image = nil
         }
         
         // 이미지 뷰의 가장자리 둥글게

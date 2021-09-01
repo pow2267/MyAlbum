@@ -8,7 +8,7 @@
 import UIKit
 import Photos
 
-class DetailViewController: UIViewController{
+class DetailViewController: UIViewController {
     
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var imageView: UIImageView!

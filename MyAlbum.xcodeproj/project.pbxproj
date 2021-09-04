@@ -64,19 +64,27 @@
 		76220ABF26CA898B00A71B24 /* MyAlbum */ = {
 			isa = PBXGroup;
 			children = (
+				76D9C8B326E37A27000E72D5 /* Controllers */,
 				76220AC026CA898B00A71B24 /* AppDelegate.swift */,
 				76220AC226CA898B00A71B24 /* SceneDelegate.swift */,
-				76220AC426CA898B00A71B24 /* ViewController.swift */,
 				76220AC626CA898B00A71B24 /* Main.storyboard */,
 				76220AC926CA898F00A71B24 /* Assets.xcassets */,
 				76220ACB26CA898F00A71B24 /* LaunchScreen.storyboard */,
 				76220ACE26CA898F00A71B24 /* Info.plist */,
 				76220ADF26CBE61100A71B24 /* PhotoListCollectionViewCell.swift */,
-				76220AE126CE5D5B00A71B24 /* AlbumViewController.swift */,
 				76220AE326CE82EA00A71B24 /* ImageCollectionViewCell.swift */,
-				76220AE526D000D800A71B24 /* DetailViewController.swift */,
 			);
 			path = MyAlbum;
+			sourceTree = "<group>";
+		};
+		76D9C8B326E37A27000E72D5 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				76220AC426CA898B00A71B24 /* ViewController.swift */,
+				76220AE126CE5D5B00A71B24 /* AlbumViewController.swift */,
+				76220AE526D000D800A71B24 /* DetailViewController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

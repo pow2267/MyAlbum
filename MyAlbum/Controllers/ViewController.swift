@@ -86,11 +86,26 @@ class ViewController: UIViewController {
             return
         }
         
-        guard let cell: PhotoListCollectionViewCell = sender as? PhotoListCollectionViewCell else {
+        /* review: 다음 ViewController에서 모든 PHAssetCollection을 다시 fetch하여 title을 이용하여 필터링하도록 구현해주셨네요.
+         이미 다음 화면으로 넘어가는 시점에 어떤 PHAssetCollection을 사용해야 할 지 알고 있으므로 collection을 넘겨주는 것이 어떨까요?
+         fetch하는 행위는 무거운 동작이므로 가급적이면 최소화하는 것이 좋습니다. */
+        guard let cell: PhotoListCollectionViewCell = sender as? PhotoListCollectionViewCell,
+              let index = collectionView.indexPath(for: cell)?.item else {
             return
         }
-        
-        albumViewController.albumTitle = cell.titleLabel.text
+
+        let collection: PHAssetCollection?
+
+        switch index {
+        case 0:
+            collection = self.recents?.firstObject
+        case 1:
+            collection = self.favorites?.firstObject
+        default:
+            collection = self.albums?.object(at: index - 2) // 0, 1번이 각각 Recents, Favorites이라서 index에서 2를 빼줌
+        }
+
+        albumViewController.assetCollection = collection
     }
 }
 
@@ -103,23 +118,36 @@ extension ViewController: UICollectionViewDataSource {
         
         /* Q. 앱이 가장 처음 로드될 때 몇몇 앨범의 이미지가 빠르게 바뀌곤 하는데, 비동기로 앨범의 썸네일을 불러와서 이런 현상이 생기는 걸까요?
             만약 비동기가 원인이 맞다면, 깜빡이는 현상을 방지하기 위해서 어떻게 해야할까요? */
+        /* 1. fetchAssets 행위 두 번 일어나고 있습니다. (섬네일 애셋 + 이미지 갯수 추출)
+         2. background thread에서 UI에 접근하여 크래시가 발생합니다.
+         3. 섬네일 추출 시 미디어 타입에 대한 predicate이 없어 비디오에 대한 섬네일이 추출될 수 있습니다.
+         4. 강제 언래핑보다는 옵셔널 언래핑을 사용해주세요. */
         OperationQueue().addOperation {
-            let collections: PHAssetCollection?
+            let collection: PHAssetCollection?
             
             switch indexPath.row {
             case 0:
-                collections = self.recents?.firstObject
+                collection = self.recents?.firstObject
             case 1:
-                collections = self.favorites?.firstObject
+                collection = self.favorites?.firstObject
             default:
-                collections = self.albums?.object(at: indexPath.row - 2) // 0, 1번이 각각 Recents, Favorites이라서 index에서 2를 빼줌
+                collection = self.albums?.object(at: indexPath.row - 2) // 0, 1번이 각각 Recents, Favorites이라서 index에서 2를 빼줌
             }
             
-            if collections != nil {
-                if let asset = PHAsset.fetchAssets(in: collections!, options: nil).lastObject {
+            if let collection = collection {
+                
+                let option = PHFetchOptions()                           // only image
+                option.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
+                
+                let result = PHAsset.fetchAssets(in: collection, options: option)
+                
+                DispatchQueue.main.async {
+                    cell.titleLabel.text = collection.localizedTitle
+                    cell.countLabel.text = "\(result.count)"
+                }
+                
+                if let asset = result.lastObject {
                     OperationQueue.main.addOperation {
-                        cell.titleLabel.text = collections!.localizedTitle
-                        cell.countLabel.text = String(collections!.photosCount)
                         
                         let imageOption: PHImageRequestOptions = PHImageRequestOptions()
                         imageOption.resizeMode = .exact
@@ -130,14 +158,20 @@ extension ViewController: UICollectionViewDataSource {
                                                   contentMode: .aspectFill,
                                                   options: imageOption,
                                                   resultHandler: { image, _ in
-                                                        cell.imageView.image = image
+                                                    DispatchQueue.main.async {
+                                                            cell.imageView.image = image
+                                                    }
                         })
                     }
                 } else {
-                    cell.imageView.image = nil
+                    DispatchQueue.main.async {
+                        cell.imageView.image = nil
+                    }
                 }
             } else {
-                cell.imageView.image = nil
+                DispatchQueue.main.async {
+                    cell.imageView.image = nil
+                }
             }
         }
         
@@ -156,13 +190,16 @@ extension ViewController: PHPhotoLibraryChangeObserver {
     // 포토 라이브러리에 변화를 감지하면 view reload
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         OperationQueue.main.addOperation {
-            self.viewDidLoad()
+            /* review: viewDidLoad()는 시스템이 호출하는 함수로서, 직접 호출하는 것은 바람직하지 않습니다.
+             (내부에서 super를 호출하기도 합니다.) (참고로 나는 reload를 잘못 씀) */
+            self.collectionView.reloadData()
         }
     }
 }
 
 // AssetCollection에 속한 asset의 개수를 구하기 위해
-// Q. 아래 코드는 ViewController 클래스가 아닌데 어느 파일에 위치해야 하나요?
+/* Q. 아래 코드는 ViewController 클래스가 아닌데 어느 파일에 위치해야 하나요?
+review: A. 해당 extension이 사용되는 ViewController 파일에 위치시키거나 또는 관련 extension을 모아서 새로 파일을 생성하여 관리해도 됩니다. */
 extension PHAssetCollection {
     var photosCount: Int {
         let fetchOptions = PHFetchOptions()

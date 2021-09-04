@@ -14,22 +14,22 @@ class AlbumViewController: UIViewController {
     @IBOutlet weak var orderItem: UIBarItem!
     @IBOutlet weak var toolbar: UIToolbar!
     
-    var albumTitle: String?
-    var photos: PHFetchResult<PHAssetCollection>?
+    var assetCollection: PHAssetCollection?
+    var assets: PHFetchResult<PHAsset>?
     let imageManager: PHCachingImageManager = PHCachingImageManager()
     var isOrderedByCreationDate: Bool = false
     var isSelectMode: Bool = false
     var selectedCells: [IndexPath] = []
     
     @IBAction func touchUpTrashToolbarItem(_ sender: UIBarButtonItem) {
+        guard let collection = self.assetCollection else {
+            return
+        }
+        
         // NSMutableArray: 동적으로 크기를 변경할 수 있는, 순서가 있는 콜렉션 (가변 배열)
         let assets : NSMutableArray = NSMutableArray()
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: isOrderedByCreationDate)]
-        
-        guard let collection = self.photos?.firstObject else {
-            return
-        }
         
         for indexPath in selectedCells {
             let asset = PHAsset.fetchAssets(in: collection, options: fetchOptions).object(at: indexPath.row)
@@ -62,6 +62,9 @@ class AlbumViewController: UIViewController {
     }
     
     @IBAction func touchUpOrderBarItem() {
+        /* review: 미리 애셋들을 fetch하도록 변경한 경우 여기서 한 번 더 변경된 Order로 fetch해주어야합니다.
+         Q. fetch를 한 번 더 해야한다고 하셨는데, 밑에서 collectionView를 reload해주고 있고, reload할 때 변경된
+         isOrderedByCreationDate를 이용해 다시 한 번 fetch하기 때문에 여기서는 하지 않아도 괜찮지 않을까요?*/
         if self.orderItem.title == "최신순" {
             self.orderItem.title = "과거순"
             self.isOrderedByCreationDate = true
@@ -94,7 +97,7 @@ class AlbumViewController: UIViewController {
             self.orderItem.isEnabled = false
         } else {
             sender.title = "선택"
-            self.navigationItem.title = self.albumTitle
+            self.navigationItem.title = self.assetCollection?.localizedTitle
             self.isSelectMode = false
             self.selectedCells = []
             self.collectionView.reloadData()
@@ -105,30 +108,21 @@ class AlbumViewController: UIViewController {
     }
     
     func requestCollection() {
-        guard let title = self.albumTitle else {
-            preconditionFailure("선택한 앨범을 찾을 수 없음")
-        }
         
-        var photos: PHFetchResult<PHAssetCollection>? = nil
-        // Q. 사진을 불러오는 부분과 불러온 사진을 사용하는 부분(func collectionView)이 다른데 이때는 어떻게 비동기 처리를 해야하나요?
-        if title == "Recents" {
-            photos = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
-        } else if title == "Favorites" {
-            photos = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumFavorites, options: nil)
-        } else {
-            let fetchOptions = PHFetchOptions()
-            fetchOptions.predicate = NSPredicate(format: "title = %@", title)
-            
-            photos = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: fetchOptions)
+        guard let collection = self.assetCollection else {
+            return
         }
-        
-        self.photos = photos
+                
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: self.isOrderedByCreationDate)]
+                
+        self.assets = PHAsset.fetchAssets(in: collection, options: fetchOptions)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationItem.title = self.albumTitle
+        self.navigationItem.title = self.assetCollection?.localizedTitle
         
         self.requestCollection()
         
@@ -199,7 +193,7 @@ extension AlbumViewController: UICollectionViewDelegate {
                 return
             }
             
-            guard let collection = self.photos?.firstObject else {
+            guard let collection = self.assetCollection else {
                 return
             }
             
@@ -219,11 +213,11 @@ extension AlbumViewController: UICollectionViewDataSource {
             preconditionFailure("콜렉션 뷰 셀 생성 오류")
         }
         
-        guard let collection = self.photos?.firstObject else {
+        guard let collection = self.assetCollection else {
             preconditionFailure("앨범 불러오기 오류")
         }
         
-        // ViewController에서와 마찬가지로 셀 속 이미지들이 깜빡이면서 바뀌는 듯한 현상이 나타납니다. 비동기 처리가 원인일까요?
+        // Q. ViewController에서와 마찬가지로 셀 속 이미지들이 깜빡이면서 바뀌는 듯한 현상이 나타납니다. 비동기 처리가 원인일까요?
         OperationQueue().addOperation {
             let fetchOptions = PHFetchOptions()
             fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: self.isOrderedByCreationDate)]
@@ -240,18 +234,23 @@ extension AlbumViewController: UICollectionViewDataSource {
                                           contentMode: .aspectFill,
                                           options: imageOption,
                                           resultHandler: { image, _ in
-                                            cell.imageView.image = image
+                                            DispatchQueue.main.async {
+                                                cell.imageView.image = image
+                                            }
                 })
                 
+                // review: main thread에서 수행될 수 있도록 수정해야 합니다.
                 // 다중 선택시 테두리 표시
-                cell.layer.borderColor = UIColor.red.cgColor
-                
-                if self.isSelectMode && self.selectedCells.contains(indexPath) {
-                    cell.layer.borderWidth = 2
-                    cell.imageView.alpha = 0.75
-                } else {
-                    cell.layer.borderWidth = 0
-                    cell.imageView.alpha = 1
+                DispatchQueue.main.async {
+                    cell.layer.borderColor = UIColor.red.cgColor
+                    
+                    if self.isSelectMode && self.selectedCells.contains(indexPath) {
+                        cell.layer.borderWidth = 2
+                        cell.imageView.alpha = 0.75
+                    } else {
+                        cell.layer.borderWidth = 0
+                        cell.imageView.alpha = 1
+                    }
                 }
             }
         }
@@ -260,12 +259,19 @@ extension AlbumViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.photos?.firstObject?.photosCount ?? 0
+        return self.assets?.count ?? 0
     }
 }
 
 extension AlbumViewController: PHPhotoLibraryChangeObserver {
     func photoLibraryDidChange(_ changeInstance: PHChange) {
+        // review: 미리 fetch하는 경우 변경사항을 기존 fetchResult에 반영해줘야 합니다.
+        guard let assets = self.assets, let newAssets = changeInstance.changeDetails(for: assets)?.fetchResultAfterChanges else {
+            return
+        }
+
+        self.assets = newAssets
+        
         // 애니메이션 없이 새로 고침
         OperationQueue.main.addOperation {
             self.collectionView.performBatchUpdates({

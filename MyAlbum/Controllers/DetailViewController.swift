@@ -164,11 +164,13 @@ class DetailViewController: UIViewController {
                                   contentMode: .aspectFill,
                                   options: nil,
                                   resultHandler: { image, _ in
-                                    self.imageView.image = image
-                                    if asset.isFavorite {
-                                        self.favoriteButton.title = "❤️"
-                                    } else {
-                                        self.favoriteButton.title = "🖤"
+                                    DispatchQueue.main.async {
+                                        self.imageView.image = image
+                                        if asset.isFavorite {
+                                            self.favoriteButton.title = "❤️"
+                                        } else {
+                                            self.favoriteButton.title = "🖤"
+                                        }
                                     }
         })
         

@@ -55,8 +55,6 @@ class DetailViewController: UIViewController {
                 if isCompleted, let localIdentifier = self.localIdentifier, let result = PHAsset.fetchAssets(withLocalIdentifiers: [localIdentifier], options: nil).firstObject {
                     self.asset = result
                     
-                    /* Q. asset의 isFavorite값을 바꿔주고 나서도 이 뷰 컨트롤러에서 photoLibraryDidChange가 호출되지 않습니다
-                    결국 completeHandler에서 전부 처리했는데, 이 뷰가 아닌 다른 뷰 컨트롤러에서는 photoLibraryDidChange 함수가 변화를 감지합니다. 이유가 뭔가요? */
                     OperationQueue.main.addOperation {
                         if result.isFavorite {
                             self.favoriteButton.title = "❤️"
@@ -176,7 +174,7 @@ class DetailViewController: UIViewController {
         
         self.scrollView.minimumZoomScale = 1.0
         self.scrollView.maximumZoomScale = 5.0
-        scrollView.delegate = self
+        self.scrollView.delegate = self
     }
 }
 

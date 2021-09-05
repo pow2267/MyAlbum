@@ -29,9 +29,9 @@ class AlbumViewController: UIViewController {
         // NSMutableArray: 동적으로 크기를 변경할 수 있는, 순서가 있는 콜렉션 (가변 배열)
         let assets : NSMutableArray = NSMutableArray()
         let fetchOptions = PHFetchOptions()
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: isOrderedByCreationDate)]
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: self.isOrderedByCreationDate)]
         
-        for indexPath in selectedCells {
+        for indexPath in self.selectedCells {
             let asset = PHAsset.fetchAssets(in: collection, options: fetchOptions).object(at: indexPath.row)
             assets.add(asset)
         }
@@ -44,7 +44,7 @@ class AlbumViewController: UIViewController {
     @IBAction func touchUpShareToolbarItem(_ sender: UIBarButtonItem) {
         var sharedPhotos: [UIImage] = []
         
-        for indexPath in selectedCells {
+        for indexPath in self.selectedCells {
             guard let cell = self.collectionView.cellForItem(at: indexPath) as? ImageCollectionViewCell else {
                 return
             }
@@ -62,9 +62,10 @@ class AlbumViewController: UIViewController {
     }
     
     @IBAction func touchUpOrderBarItem() {
-        /* review: 미리 애셋들을 fetch하도록 변경한 경우 여기서 한 번 더 변경된 Order로 fetch해주어야합니다.
-         Q. fetch를 한 번 더 해야한다고 하셨는데, 밑에서 collectionView를 reload해주고 있고, reload할 때 변경된
-         isOrderedByCreationDate를 이용해 다시 한 번 fetch하기 때문에 여기서는 하지 않아도 괜찮지 않을까요?*/
+        guard let collection = self.assetCollection else {
+            return
+        }
+        
         if self.orderItem.title == "최신순" {
             self.orderItem.title = "과거순"
             self.isOrderedByCreationDate = true
@@ -72,6 +73,12 @@ class AlbumViewController: UIViewController {
             self.orderItem.title = "최신순"
             self.isOrderedByCreationDate = false
         }
+        
+        // review: 미리 애셋들을 fetch하도록 변경한 경우 여기서 한 번 더 변경된 Order로 fetch해주어야합니다.
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: self.isOrderedByCreationDate)]
+                
+        self.assets = PHAsset.fetchAssets(in: collection, options: fetchOptions)
         
         // 애니메이션 없이 새로 고침
         OperationQueue.main.addOperation {
@@ -108,7 +115,6 @@ class AlbumViewController: UIViewController {
     }
     
     func requestCollection() {
-        
         guard let collection = self.assetCollection else {
             return
         }
@@ -239,7 +245,9 @@ extension AlbumViewController: UICollectionViewDataSource {
                                             }
                 })
                 
-                // review: main thread에서 수행될 수 있도록 수정해야 합니다.
+                /* review: main thread에서 수행될 수 있도록 수정해야 합니다.
+                   Q. 현재 이 블록은 OperationQueue.main.addOperation에 속하는 블록인데
+                   그런데도 DispatchQueue.main.async를 따로 추가해줘야 하나요?*/
                 // 다중 선택시 테두리 표시
                 DispatchQueue.main.async {
                     cell.layer.borderColor = UIColor.red.cgColor

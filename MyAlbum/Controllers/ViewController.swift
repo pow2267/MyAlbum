@@ -176,7 +176,9 @@ extension ViewController: UICollectionViewDataSource {
         }
         
         // 이미지 뷰의 가장자리 둥글게
-        cell.imageView.layer.cornerRadius = cell.imageView.frame.width / 40
+        DispatchQueue.main.async {
+            cell.imageView.layer.cornerRadius = cell.imageView.frame.width / 40
+        }
         
         return cell
     }
@@ -191,7 +193,7 @@ extension ViewController: PHPhotoLibraryChangeObserver {
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         OperationQueue.main.addOperation {
             /* review: viewDidLoad()는 시스템이 호출하는 함수로서, 직접 호출하는 것은 바람직하지 않습니다.
-             (내부에서 super를 호출하기도 합니다.) (참고로 나는 reload를 잘못 씀) */
+             (내부에서 super를 호출하기도 합니다.) */
             self.collectionView.reloadData()
         }
     }
